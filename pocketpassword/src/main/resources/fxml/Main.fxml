@@ -9,10 +9,10 @@
    <top>
       <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
-          <Button mnemonicParsing="false" onAction="#handleTlbExit" text="btnExit" />
-            <Button mnemonicParsing="false" onAction="#handleTlbAuth" text="btnAuths" />
-            <Button mnemonicParsing="false" onAction="#handleTlbCateg" text="btnCategories" />
-            <Button mnemonicParsing="false" onAction="#handleTlbAbout" text="btnAbout" />
+          <Button mnemonicParsing="false" onAction="#handleTlbExit" text="%btnExit" />
+            <Button mnemonicParsing="false" onAction="#handleTlbAuth" text="%btnAuths" />
+            <Button mnemonicParsing="false" onAction="#handleTlbCateg" text="%btnCategories" />
+            <Button mnemonicParsing="false" onAction="#handleTlbAbout" text="%btnAbout" />
         </items>
       </ToolBar>
    </top>

@@ -33,7 +33,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
 @Component
-public class CategoryListViewControllerImpl  {
+public class CategoryListViewControllerImpl  implements Initializable {
 
 	@Autowired
 	private CategoryService categService;
@@ -54,8 +54,8 @@ public class CategoryListViewControllerImpl  {
 	private FilteredList<CategoryVM> filteredData;
 	private CategoryVM currentData = null;
 
-	@FXML
-	public void initialize() {
+	@Override
+	public void initialize(URL url, ResourceBundle bundle) {
 
 		nameColumn.setCellValueFactory(new PropertyValueFactory<CategoryVM, String>("name"));
 

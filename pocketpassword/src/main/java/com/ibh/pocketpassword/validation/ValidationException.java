@@ -1,4 +1,4 @@
-package com.ibh.pocketpassword.viewmodel;
+package com.ibh.pocketpassword.validation;
 
 import java.util.HashMap;
 import java.util.List;

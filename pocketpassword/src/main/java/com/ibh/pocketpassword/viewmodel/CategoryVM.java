@@ -1,9 +1,6 @@
 package com.ibh.pocketpassword.viewmodel;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-
-import com.ibh.pocketpassword.model.Category;
+import com.ibh.pocketpassword.validation.ValidationException;
 
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
@@ -16,8 +13,6 @@ import javafx.scene.paint.Color;
 public class CategoryVM extends BaseViewModel<CategoryVM> {
 
 	private LongProperty id;
-	@NotEmpty(message = "Category Name is obligatory")
-	@Size(min = 3, message = "Too short. Minimum length is 3 characters")
 	private StringProperty name;
 	private ObjectProperty<Color> color;
 
@@ -64,10 +59,6 @@ public class CategoryVM extends BaseViewModel<CategoryVM> {
 	@Override
 	public void validateModel() throws ValidationException {
 		super.validate();
-	}
-
-	public static CategoryVM fromModel(Category model) {
-		return new CategoryVM(model.getId(), model.getName(), model.getColor());
 	}
 
 	public LongProperty idProperty() {

@@ -1,23 +1,29 @@
 package com.ibh.pocketpassword.model;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
+import com.ibh.pocketpassword.validation.ValidationException;
 
 @Entity
 @Table(name = "CATEGORIES_DICT")
-public final class Category implements Serializable {
+public final class Category extends BaseValidatableModel<Category> {
 
 	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private final Long id;
 
 	@Column(unique = true, length = 100)
+	@NotEmpty(message = "Category Name is obligatory")
+	@Size(min = 3, message = "Too short. Minimum length is 3 characters")
 	private final String name;
 	@Column(length = 15)
 	private final String color;
@@ -32,10 +38,6 @@ public final class Category implements Serializable {
 		this.color = hexcolor;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -44,6 +46,16 @@ public final class Category implements Serializable {
 		return color;
 	}
 
+	@Override
+	public Long getId() {
+		return id;
+	}
+	
+	@Override
+	public void validateModel() throws ValidationException {
+		validate();		
+	}
+	
 	public static class Builder {
 		private Long id;
 
@@ -70,5 +82,6 @@ public final class Category implements Serializable {
 		}
 
 	}
+
 
 }

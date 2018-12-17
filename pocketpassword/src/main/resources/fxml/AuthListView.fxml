@@ -19,7 +19,7 @@
 <VBox xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="com.ibh.pocketpassword.gui.AuthListViewControllerImpl">
 	<children>
-		<Label fx:id="lblHeader" styleClass="viewTitle" text="%titleAuth"
+		<Label styleClass="viewTitle" text="%titleAuth"
 			textFill="#1820b2">
 			<font>
 				<Font name="System Bold" size="14.0" />
@@ -75,7 +75,11 @@
 						</TableView>
 					</children>
 				</VBox>
-				<VBox fx:id="crudContainer" />
+				<VBox fx:id="crudContainer">
+				  <children>
+             <fx:include source="AuthDetailsView.fxml" />
+          </children>
+				</VBox>
 <!-- 
 				<AnchorPane styleClass="view">
 					<children>

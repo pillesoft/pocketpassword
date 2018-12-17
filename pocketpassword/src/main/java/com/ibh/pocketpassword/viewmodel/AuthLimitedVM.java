@@ -3,16 +3,20 @@ package com.ibh.pocketpassword.viewmodel;
 import java.time.LocalDate;
 import java.time.Period;
 
+import com.ibh.pocketpassword.validation.ValidationException;
+
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 
-	private IntegerProperty id;
+	private LongProperty id;
 	private StringProperty title;
 	private StringProperty category;
 	private StringProperty webUrl;
@@ -21,7 +25,7 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 	private StringProperty color;
 
 	public AuthLimitedVM() {
-		this.id = new SimpleIntegerProperty(null, "id", 0);
+		this.id = new SimpleLongProperty(null, "id", 0);
 		title = new SimpleStringProperty(null, "title", "");
 		category = new SimpleStringProperty(null, "category");
 		webUrl = new SimpleStringProperty(null, "webUrl", "");
@@ -29,11 +33,11 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 		validFrom = new SimpleObjectProperty<>(null, "validFrom", LocalDate.now());
 	}
 
-	public AuthLimitedVM(int id, String title, String category, String webUrl, String description, LocalDate validFrom,
+	public AuthLimitedVM(long id, String title, String category, String webUrl, String description, LocalDate validFrom,
 			String color) {
 		super();
 
-		this.id = new SimpleIntegerProperty(null, "id", id);
+		this.id = new SimpleLongProperty(null, "id", id);
 		this.title = new SimpleStringProperty(null, "title", title);
 		this.category = new SimpleStringProperty(null, "category", category);
 		this.webUrl = new SimpleStringProperty(null, "webUrl", webUrl);
@@ -47,8 +51,12 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 		super.validate();
 	}
 
-	public IntegerProperty getId() {
+	public LongProperty getId() {
 		return id;
+	}
+
+	public void setId(LongProperty id) {
+		this.id = id;
 	}
 
 	public StringProperty getTitle() {

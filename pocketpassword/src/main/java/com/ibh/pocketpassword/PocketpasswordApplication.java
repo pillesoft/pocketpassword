@@ -1,5 +1,8 @@
 package com.ibh.pocketpassword;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -23,8 +26,10 @@ public class PocketpasswordApplication extends Application {
 	public void init() throws Exception {
         SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
         context = builder.run(getParameters().getRaw().toArray(new String[0]));
- 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"));
+        
+        ResourceBundle bundle = ResourceBundle.getBundle("bundles.UIBundle", new Locale("hu"));
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"), bundle);
         loader.setControllerFactory(context::getBean);
         rootNode = loader.load();
         }

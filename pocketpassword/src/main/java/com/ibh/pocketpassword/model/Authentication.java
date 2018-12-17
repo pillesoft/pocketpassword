@@ -351,6 +351,10 @@ public final class Authentication implements Serializable {
 //    return ispwdchanged;
 //  }  
 
+	private Authentication() {
+		this(null, null, null, null, null, null, null, null, null, null);
+	}
+	
 	private Authentication(Long id, String title, String userName, String password, String webUrl, String description,
 			LocalDate validFrom, Category category, List<AuthProperty> properties, List<AuthPwdHistory> histories) {
 		super();

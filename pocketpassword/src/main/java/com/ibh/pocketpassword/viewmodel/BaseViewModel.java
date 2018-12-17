@@ -10,6 +10,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 
+import com.ibh.pocketpassword.validation.VMValidation;
+import com.ibh.pocketpassword.validation.ValidationException;
+
 public abstract class BaseViewModel<T> implements VMValidation {
 
   private HashMap<String, List<String>> validationErrors;
@@ -17,7 +20,6 @@ public abstract class BaseViewModel<T> implements VMValidation {
   public BaseViewModel() {
     validationErrors = new HashMap<>();
   }
-
   
   @Override
   public HashMap<String, List<String>> getValidationErrors() {

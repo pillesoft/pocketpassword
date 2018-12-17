@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ibh.pocketpassword.service.CategoryService;
+import com.ibh.pocketpassword.validation.ValidationException;
 import com.ibh.pocketpassword.viewmodel.CategoryVM;
-import com.ibh.pocketpassword.viewmodel.ValidationException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

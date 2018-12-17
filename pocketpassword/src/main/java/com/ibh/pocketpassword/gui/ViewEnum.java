@@ -6,7 +6,9 @@
 package com.ibh.pocketpassword.gui;
 
 public enum ViewEnum {
-	Login("loginView"), AuthListView("authListView"), CategoryListView("CategoryListView");
+	Login("loginView"),
+	AuthListView("AuthListView"),
+	CategoryListView("CategoryListView");
 
 	private final String viewFile;
 

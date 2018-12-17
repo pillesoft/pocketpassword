@@ -1,6 +1,8 @@
 package com.ibh.pocketpassword.gui;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,12 +14,13 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 
 @Component
-public class MainViewControllerImpl {
+public class MainViewControllerImpl implements Initializable {
 
 	@Autowired
 	private ApplicationContext appContext;
@@ -28,10 +31,13 @@ public class MainViewControllerImpl {
   private ToolBar toolbar;
 
   private BooleanProperty isToolbarDisabled;
+  private ResourceBundle bundle;
 
-  @FXML
-  public void initialize() {
+  @Override
+  public void initialize(URL url, ResourceBundle bundle) {
 
+	  this.bundle = bundle;
+	  
 //    setBundle(rb);
 
     isToolbarDisabled = new SimpleBooleanProperty(false);
@@ -45,7 +51,7 @@ public class MainViewControllerImpl {
     Node node;
     try {
     	
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(String.format("/fxml/%s.fxml", view.getViewFile())));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(String.format("/fxml/%s.fxml", view.getViewFile())), this.bundle);
       loader.setControllerFactory(appContext::getBean);
       node = loader.load();
       

@@ -9,8 +9,10 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ibh.pocketpassword.service.AuthenticationService;
 //import com.ibh.spdesktop.bl.BusinessLogic;
 //import com.ibh.spdesktop.message.CrudMessage;
 //import com.ibh.spdesktop.message.MessageService;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Component;
 //import com.ibh.spdesktop.message.UIContentMessage;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -30,8 +33,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 @Component
-public class AuthListViewControllerImpl {
+public class AuthListViewControllerImpl implements Initializable {
 
+	@Autowired
+	private AuthenticationService service;
+	@Autowired
+	private AuthDetailsViewController detailsController;
+	
 	@FXML
 	private TableView<AuthLimitedVM> authTable;
 	@FXML
@@ -53,8 +61,8 @@ public class AuthListViewControllerImpl {
 	private FilteredList<AuthLimitedVM> filteredData;
 	private AuthLimitedVM currentData = null;
 
-	@FXML
-	public void initialize() {
+	@Override
+	public void initialize(URL url, ResourceBundle bundle) {
 
 //		MessageService.register(RefreshDataMessage.class, (arg) -> {
 //			reloadData();
@@ -134,7 +142,7 @@ public class AuthListViewControllerImpl {
 
 	private void reloadData() {
 
-		data = getBl().getAuthRepos().getAuthLimited();
+		data = FXCollections.observableList(service.getVMData());
 
 		filteredData = new FilteredList<>(data, a -> {
 			String cfilter = categoryFilter.getText();
@@ -180,21 +188,20 @@ public class AuthListViewControllerImpl {
 	private void showDetails() {
 
 		if (currentData != null) {
-			setUIContent(crudContainer,
-					new CrudMessage(ViewEnum.AuthViewView, currentData.getId().get(), CRUDEnum.View));
+			detailsController.refresh(CRUDEnum.View, currentData);
 		}
 	}
 
 	@FXML
 	public void handleNew() {
-		setUIContent(crudContainer,
-				new CrudMessage(ViewEnum.AuthCRUDView, 0, CRUDEnum.New));
+//		setUIContent(crudContainer,
+//				new CrudMessage(ViewEnum.AuthCRUDView, 0, CRUDEnum.New));
 	}
 
-	private void setContent(UIContentMessage msg) {
-		setUIContent(crudContainer,
-				new CrudMessage(msg.getContent(), msg.getId(), msg.getCrud()));		
-	}
+//	private void setContent(UIContentMessage msg) {
+//		setUIContent(crudContainer,
+//				new CrudMessage(msg.getContent(), msg.getId(), msg.getCrud()));		
+//	}
 
 	@FXML
 	public void handleClearFilter() {

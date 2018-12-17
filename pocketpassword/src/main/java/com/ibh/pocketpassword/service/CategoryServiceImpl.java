@@ -24,8 +24,8 @@ public class CategoryServiceImpl implements CategoryService {
 	@Override
 	public List<CategoryVM> getVMData() {
 		List<CategoryVM> vmlist = new ArrayList<>();
-		categRepository.findAll().forEach(a -> {
-			vmlist.add(CategoryVM.fromModel(a));
+		categRepository.findAll().forEach(vm -> {
+			vmlist.add(fromModel(vm));
 		});
 		return vmlist;
 	}
@@ -40,10 +40,14 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 	
 	@Override
+	public CategoryVM fromModel(Category model) {
+		return new CategoryVM(model.getId(), model.getName(), model.getColor());
+	}
+	
+	@Override
 	public Category save(CategoryVM vm) {
-		vm.validateModel();
-		
 		Category inst = fromVM(vm);
+		inst.validateModel();
 		
 		return categRepository.save(inst);
 	}
