@@ -31,6 +31,11 @@ public class AuthenticationServcieImpl implements AuthenticationService {
 	}
 
 	@Override
+	public AuthLimitedVM getVMById(Long id) {
+		return fromModel(authRepository.findById(id).get());
+	}
+
+	@Override
 	public Authentication fromVM(AuthLimitedVM vm) {
 		// TODO Auto-generated method stub
 		return null;

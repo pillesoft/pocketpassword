@@ -188,7 +188,7 @@ public class AuthListViewControllerImpl implements Initializable {
 	private void showDetails() {
 
 		if (currentData != null) {
-			detailsController.refresh(CRUDEnum.View, currentData);
+			detailsController.refresh(CRUDEnum.View, currentData.getId().get());
 		}
 	}
 

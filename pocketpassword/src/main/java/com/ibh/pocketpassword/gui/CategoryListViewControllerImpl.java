@@ -83,7 +83,7 @@ public class CategoryListViewControllerImpl  implements Initializable {
 		    public void handle(MouseEvent event) {
 		        if (event.isPrimaryButtonDown() && event.getClickCount() == 2) {
 		        	CategoryVM selected = categoryTable.getSelectionModel().getSelectedItem();
-		        	detailsController.refresh(CRUDEnum.Update, selected);
+		        	detailsController.refresh(CRUDEnum.Update, selected.getId());
 		        }
 		    }
 		});
@@ -113,18 +113,18 @@ public class CategoryListViewControllerImpl  implements Initializable {
 
 	private void showDetails() {
 		if (currentData != null) {
-			detailsController.refresh(CRUDEnum.View, currentData);
+			detailsController.refresh(CRUDEnum.View, currentData.getId());
 		}
 	}
 
 	@FXML
 	public void handleNew() {
-		detailsController.refresh(CRUDEnum.New, new CategoryVM());
+		detailsController.refresh(CRUDEnum.New, 0L);
 	}
 
 	@FXML
 	public void handleDelete() {
-		detailsController.refresh(CRUDEnum.Delete, currentData);
+		detailsController.refresh(CRUDEnum.Delete, currentData.getId());
 	}
 
 

@@ -65,13 +65,13 @@ public class CategoryDetailsViewControllerImpl implements CategoryDetailsViewCon
 	}
 	
 	@Override
-	public void refresh(CRUDEnum mode, CategoryVM vm) {
+	public void refresh(CRUDEnum mode, Long id) {
 		if (viewModel != null) {
 			unbind();
 		}
 		
 		this.mode = mode;
-		viewModel = vm;
+		viewModel = categService.getVMById(id);
 		bind();
 		txtName.getStyleClass().removeIf(style -> style.equals("txtError"));
 		txtName.setEditable(false);

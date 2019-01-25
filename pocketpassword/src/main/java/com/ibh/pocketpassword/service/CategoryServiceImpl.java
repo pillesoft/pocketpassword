@@ -31,6 +31,11 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
+	public CategoryVM getVMById(Long id) {
+		return fromModel(categRepository.findById(id).get());
+	}
+
+	@Override
 	public Category fromVM(CategoryVM vm) {
 		return new Category.Builder()
 				.id(vm.getId())

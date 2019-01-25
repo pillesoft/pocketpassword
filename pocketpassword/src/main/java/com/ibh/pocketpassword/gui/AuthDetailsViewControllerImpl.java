@@ -6,8 +6,10 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ibh.pocketpassword.service.AuthenticationService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 
 import javafx.animation.KeyFrame;
@@ -18,7 +20,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -29,6 +33,9 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthDetailsViewControllerImpl.class);
 	
+	@Autowired
+	private AuthenticationService service;
+	
 	private AuthLimitedVM viewModel;
 	private CRUDEnum mode;
 	
@@ -38,13 +45,18 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private Timeline timeline;
 	
 	@FXML
+	private Hyperlink hlTitle;
+	@FXML
+	private Label lblCategName;
+	
+	@FXML
 	private TextField txtTitle;
 	@FXML
 	private TextField txtCategory;
 	@FXML
 	private Hyperlink txtWebAddress;
 	@FXML
-	private TextField txtValidFrom;
+	private DatePicker dpValidFrom;
 	@FXML
 	private TextArea txaDescription;
 	@FXML
@@ -97,6 +109,19 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		}
 	}
 
+	@FXML
+	public void handleTitleLink() {
+		String command = String.format("start %s %s", "firefox", viewModel.getWebUrl().getValue());
+		try {
+			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
+			// this is linux
+			// Runtime.getRuntime().exec(new String[] { "chromium-browser",
+			// "http://example.com/" });
+		} catch (IOException ex) {
+			LOG.warn("cannot open browser", ex);
+		}
+	}
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		// TODO
@@ -149,13 +174,13 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	}
 
 	@Override
-	public void refresh(CRUDEnum mode, AuthLimitedVM vm) {
+	public void refresh(CRUDEnum mode, Long id) {
 		if (viewModel != null) {
 			unbind();
 		}
 		
 		this.mode = mode;
-		viewModel = vm;
+		viewModel = service.getVMById(id); 
 		bind();
 //		txtName.getStyleClass().removeIf(style -> style.equals("txtError"));
 //		txtName.setEditable(false);
@@ -179,8 +204,14 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	}
 
 	private void bind() {
+//		hlTitle.textProperty().bindBidirectional(viewModel.getTitle());
+//		lblCategName.textProperty().bindBidirectional(viewModel.getCategory());
+		
 		txtTitle.textProperty().bindBidirectional(viewModel.getTitle());
-//		cpColor.valueProperty().bindBidirectional(viewModel.colorProperty());
+		txtCategory.textProperty().bindBidirectional(viewModel.getCategory());
+		txtWebAddress.textProperty().bindBidirectional(viewModel.getWebUrl());
+		dpValidFrom.valueProperty().bindBidirectional(viewModel.getValidFrom());
+		txaDescription.textProperty().bindBidirectional(viewModel.getDescription());
 	}
 
 	private void unbind() {
