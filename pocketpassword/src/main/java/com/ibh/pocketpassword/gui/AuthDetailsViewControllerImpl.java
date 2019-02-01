@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.ibh.pocketpassword.service.AuthenticationService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
+import com.ibh.pocketpassword.viewmodel.AuthUserPwdVM;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -138,9 +139,9 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		tPaneShowAuth.setExpanded(false);
 		tPaneShowAuth.expandedProperty().addListener((obs, wasExpanded, isExpanded)->{
 			if(isExpanded) {
-//				AuthInfo ai = getBl().getAuthRepos().getAuthInfo(msg.getId());
-//				txtShowUserName.setText(ai.getUsername());
-//				txtShowPassword.setText(ai.getPwdClear());
+				AuthUserPwdVM upvm = service.getUserPwd(viewModel.getId().longValue());
+				txtShowUserName.setText(upvm.getUserName());
+				txtShowPassword.setText(upvm.getPassword());
 				
 				// add the timer
 				timerCountDown = TIMERVALUE;
@@ -155,9 +156,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		                        // update header
 		                        tPaneShowAuth.setText(String.format("%s - %s", ShowAuthPaneTitle, timerCountDown));
 		                        if (timerCountDown <= 0) {
-		                            timeline.stop();
-		                            tPaneShowAuth.setExpanded(false);
-		                            tPaneShowAuth.setText(ShowAuthPaneTitle);
+		                        	closeShowAuthPane();
 		                        }
 		                      }
 		                }));
@@ -165,16 +164,26 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 			} else {
 				// this is when the pane is closed by the user
 				if(timeline != null) {
-					timeline.stop();
-					tPaneShowAuth.setText(ShowAuthPaneTitle);
+					closeShowAuthPane();
 				}
 			}
 		});
 //		setUpValidators();
 	}
 
+	private void closeShowAuthPane() {
+        timeline.stop();
+        tPaneShowAuth.setExpanded(false);
+        tPaneShowAuth.setText(ShowAuthPaneTitle);
+
+		txtShowUserName.setText(null);
+		txtShowPassword.setText(null);
+
+	}
+	
 	@Override
 	public void refresh(CRUDEnum mode, Long id) {
+		closeShowAuthPane();
 		if (viewModel != null) {
 			unbind();
 		}

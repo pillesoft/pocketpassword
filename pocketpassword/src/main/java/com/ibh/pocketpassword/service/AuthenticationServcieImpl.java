@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ibh.pocketpassword.model.Authentication;
 import com.ibh.pocketpassword.model.AuthenticatonRepository;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
+import com.ibh.pocketpassword.viewmodel.AuthUserPwdVM;
 
 @Service
 public class AuthenticationServcieImpl implements AuthenticationService {
@@ -56,6 +57,11 @@ public class AuthenticationServcieImpl implements AuthenticationService {
 	public void delete(AuthLimitedVM vm) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public AuthUserPwdVM getUserPwd(Long id) {
+		return authRepository.getAuthUserPwd(id);
 	}
 
 }
