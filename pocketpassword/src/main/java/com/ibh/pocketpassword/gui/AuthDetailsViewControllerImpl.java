@@ -25,9 +25,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.util.Duration;
 
 @Component
@@ -37,6 +41,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	
 	@Autowired
 	private AuthenticationService service;
+	private Clipboard clpbrd; 
 	
 	private AuthLimitedVM viewModel;
 //	private CRUDEnum mode;
@@ -71,10 +76,14 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private Button cmdEdit;
 	@FXML
 	private Button cmdDelete;
-
+	@FXML
+	private ToggleButton tbtnShowHide;
+	@FXML
+	private PasswordField txtMaskedUserName;
+	@FXML
+	private PasswordField txtMaskedPassword;
 	@FXML
 	private TextField txtShowUserName;
-
 	@FXML
 	private TextField txtShowPassword;
 
@@ -85,12 +94,17 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 
 	@FXML
 	public void handleCopyUserName() {
-
+		ClipboardContent content = new ClipboardContent();
+		content.putString(txtShowUserName.getText());
+		clpbrd.setContent(content);
+		
 	}
 
 	@FXML
 	public void handleCopyPassword() {
-
+		ClipboardContent content = new ClipboardContent();
+		content.putString(txtShowPassword.getText());
+		clpbrd.setContent(content);
 	}
 
 	@FXML
@@ -128,18 +142,29 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		}
 	}
 	
+	@FXML
+	public void handleShowHide() {
+		String title = tbtnShowHide.selectedProperty().get() ? "Hide UserName/Password" : "Show UserName/Password";  
+		tbtnShowHide.setText(title);
+	}
+	
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
-		// TODO
+		
+		clpbrd = Clipboard.getSystemClipboard();
+		
+		txtShowUserName.managedProperty().bind(tbtnShowHide.selectedProperty());
+		txtShowUserName.visibleProperty().bind(tbtnShowHide.selectedProperty());
+		txtMaskedUserName.managedProperty().bind(tbtnShowHide.selectedProperty().not());
+		txtMaskedUserName.visibleProperty().bind(tbtnShowHide.selectedProperty().not());
 
-//		CrudMessage msg = (CrudMessage) getMessage();
-//		switch (msg.getCrud()) {
-//		case View:
-//			vm = fromEntityToVM(getBl().getAuthRepos().getById(msg.getId()));
-//			break;
-//		default:
-//			break;
-//		}
+		txtShowPassword.managedProperty().bind(tbtnShowHide.selectedProperty());
+		txtShowPassword.visibleProperty().bind(tbtnShowHide.selectedProperty());
+		txtMaskedPassword.managedProperty().bind(tbtnShowHide.selectedProperty().not());
+		txtMaskedPassword.visibleProperty().bind(tbtnShowHide.selectedProperty().not());
+
+		txtShowUserName.textProperty().bindBidirectional(txtMaskedUserName.textProperty());
+		txtShowPassword.textProperty().bindBidirectional(txtMaskedPassword.textProperty());
 		
 		tPaneShowAuth.setExpanded(false);
 		tPaneShowAuth.expandedProperty().addListener((obs, wasExpanded, isExpanded)->{
@@ -181,6 +206,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		tPaneShowAuth.setExpanded(false);
         tPaneShowAuth.setText(ShowAuthPaneTitle);
 
+        clpbrd.clear();
+        
 		txtShowUserName.setText(null);
 		txtShowPassword.setText(null);
 
