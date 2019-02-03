@@ -2,6 +2,7 @@ package com.ibh.pocketpassword.viewmodel;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 
 import com.ibh.pocketpassword.validation.ValidationException;
 
@@ -21,7 +22,7 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 	private StringProperty category;
 	private StringProperty webUrl;
 	private StringProperty description;
-	private ObjectProperty<LocalDate> validFrom;
+	private LocalDate validFrom;
 	private StringProperty color;
 
 	public AuthLimitedVM() {
@@ -30,7 +31,7 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 		category = new SimpleStringProperty(null, "category");
 		webUrl = new SimpleStringProperty(null, "webUrl", "");
 		description = new SimpleStringProperty(null, "description", "");
-		validFrom = new SimpleObjectProperty<>(null, "validFrom", LocalDate.now());
+		validFrom = null;
 	}
 
 	public AuthLimitedVM(long id, String title, String category, String webUrl, String description, LocalDate validFrom,
@@ -42,7 +43,7 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 		this.category = new SimpleStringProperty(null, "category", category);
 		this.webUrl = new SimpleStringProperty(null, "webUrl", webUrl);
 		this.description = new SimpleStringProperty(null, "description", description);
-		this.validFrom = new SimpleObjectProperty<>(null, "validFrom", validFrom);
+		this.validFrom = validFrom;
 		this.color = new SimpleStringProperty(null, "color", color);
 	}
 
@@ -91,11 +92,11 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 		this.description = description;
 	}
 
-	public ObjectProperty<LocalDate> getValidFrom() {
+	public LocalDate getValidFrom() {
 		return validFrom;
 	}
 
-	public void setValidFrom(ObjectProperty<LocalDate> validFrom) {
+	public void setValidFrom(LocalDate validFrom) {
 		this.validFrom = validFrom;
 	}
 
@@ -104,11 +105,11 @@ public class AuthLimitedVM extends BaseViewModel<AuthLimitedVM> {
 	}
 
 	public IntegerProperty getNumberOfDays() {
-		if (validFrom.getValue() == null) {
+		if (validFrom == null) {
 			return new SimpleIntegerProperty(0);
-		} else {
-			Period p = Period.between(validFrom.getValue(), LocalDate.now());
-			return new SimpleIntegerProperty(p.getDays());
+		} else {			
+			long days = ChronoUnit.DAYS.between(validFrom, LocalDate.now());
+			return new SimpleIntegerProperty((int) days);
 		}
 	}
 

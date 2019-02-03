@@ -2,6 +2,7 @@ package com.ibh.pocketpassword.gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private AuthenticationService service;
 	
 	private AuthLimitedVM viewModel;
-	private CRUDEnum mode;
+//	private CRUDEnum mode;
 	
 	private final String ShowAuthPaneTitle = "Show Authentication";
 	private final Integer TIMERVALUE = 10;
@@ -49,6 +50,10 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private Hyperlink hlTitle;
 	@FXML
 	private Label lblCategName;
+	@FXML
+	private Label lblDaysOld;
+	@FXML
+	private Label lblCreatedOn;
 	
 	@FXML
 	private TextField txtTitle;
@@ -97,18 +102,18 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 
 	}
 
-	@FXML
-	public void handleWebAddressLink() {
-		String command = String.format("start %s %s", "firefox", txtWebAddress.getText());
-		try {
-			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
-			// this is linux
-			// Runtime.getRuntime().exec(new String[] { "chromium-browser",
-			// "http://example.com/" });
-		} catch (IOException ex) {
-			LOG.warn("cannot open browser", ex);
-		}
-	}
+//	@FXML
+//	public void handleWebAddressLink() {
+//		String command = String.format("start %s %s", "firefox", txtWebAddress.getText());
+//		try {
+//			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
+//			// this is linux
+//			// Runtime.getRuntime().exec(new String[] { "chromium-browser",
+//			// "http://example.com/" });
+//		} catch (IOException ex) {
+//			LOG.warn("cannot open browser", ex);
+//		}
+//	}
 
 	@FXML
 	public void handleTitleLink() {
@@ -172,8 +177,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	}
 
 	private void closeShowAuthPane() {
-        timeline.stop();
-        tPaneShowAuth.setExpanded(false);
+		timeline.stop();
+		tPaneShowAuth.setExpanded(false);
         tPaneShowAuth.setText(ShowAuthPaneTitle);
 
 		txtShowUserName.setText(null);
@@ -183,12 +188,14 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	
 	@Override
 	public void refresh(CRUDEnum mode, Long id) {
-		closeShowAuthPane();
+		if(timeline != null) {
+			closeShowAuthPane();
+		}
 		if (viewModel != null) {
 			unbind();
 		}
 		
-		this.mode = mode;
+//		this.mode = mode;
 		viewModel = service.getVMById(id); 
 		bind();
 //		txtName.getStyleClass().removeIf(style -> style.equals("txtError"));
@@ -213,18 +220,20 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	}
 
 	private void bind() {
-//		hlTitle.textProperty().bindBidirectional(viewModel.getTitle());
-//		lblCategName.textProperty().bindBidirectional(viewModel.getCategory());
+		hlTitle.setText(viewModel.getTitle().get());
+		lblCategName.setText(viewModel.getCategory().get());
+		lblDaysOld.setText(String.valueOf(viewModel.getNumberOfDays().intValue()));
+		lblCreatedOn.setText(viewModel.getValidFrom().format(DateTimeFormatter.ISO_LOCAL_DATE));
 		
-		txtTitle.textProperty().bindBidirectional(viewModel.getTitle());
-		txtCategory.textProperty().bindBidirectional(viewModel.getCategory());
-		txtWebAddress.textProperty().bindBidirectional(viewModel.getWebUrl());
-		dpValidFrom.valueProperty().bindBidirectional(viewModel.getValidFrom());
-		txaDescription.textProperty().bindBidirectional(viewModel.getDescription());
+//		txtTitle.textProperty().bindBidirectional(viewModel.getTitle());
+//		txtCategory.textProperty().bindBidirectional(viewModel.getCategory());
+//		txtWebAddress.textProperty().bindBidirectional(viewModel.getWebUrl());
+//		dpValidFrom.valueProperty().bindBidirectional(viewModel.getValidFrom());
+//		txaDescription.textProperty().bindBidirectional(viewModel.getDescription());
 	}
 
 	private void unbind() {
-		txtTitle.textProperty().unbindBidirectional(viewModel.getTitle());
+//		txtTitle.textProperty().unbindBidirectional(viewModel.getTitle());
 //		cpColor.valueProperty().unbindBidirectional(viewModel.colorProperty());
 	}
 	
