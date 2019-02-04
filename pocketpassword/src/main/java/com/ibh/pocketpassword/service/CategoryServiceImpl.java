@@ -25,14 +25,14 @@ public class CategoryServiceImpl implements CategoryService {
 	public List<CategoryVM> getVMData() {
 		List<CategoryVM> vmlist = new ArrayList<>();
 		categRepository.findAll().forEach(vm -> {
-			vmlist.add(fromModel(vm));
+			vmlist.add(fromEntity(vm));
 		});
 		return vmlist;
 	}
 
 	@Override
 	public CategoryVM getVMById(Long id) {
-		return fromModel(categRepository.findById(id).get());
+		return fromEntity(categRepository.findById(id).get());
 	}
 
 	@Override
@@ -45,8 +45,8 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 	
 	@Override
-	public CategoryVM fromModel(Category model) {
-		return new CategoryVM(model.getId(), model.getName(), model.getColor());
+	public CategoryVM fromEntity(Category entity) {
+		return new CategoryVM(entity.getId(), entity.getName(), entity.getColor());
 	}
 	
 	@Override

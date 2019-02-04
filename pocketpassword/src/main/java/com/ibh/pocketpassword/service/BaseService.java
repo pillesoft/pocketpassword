@@ -2,12 +2,10 @@ package com.ibh.pocketpassword.service;
 
 import java.util.List;
 
-public interface BaseService<T, U> {
+public interface BaseService<T, U> extends BaseReadOnlyService<T, U> {
 	List<T> getData();
-	List<U> getVMData();
-	U getVMById(Long id);
 	T fromVM(U vm);
-	U fromModel(T model);
+	U fromEntity(T entity);
 	T save(U vm);
 	void delete(U vm);
 }

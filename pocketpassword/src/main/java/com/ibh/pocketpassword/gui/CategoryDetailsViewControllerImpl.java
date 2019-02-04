@@ -71,7 +71,11 @@ public class CategoryDetailsViewControllerImpl implements CategoryDetailsViewCon
 		}
 		
 		this.mode = mode;
-		viewModel = categService.getVMById(id);
+		if (this.mode == CRUDEnum.New) {
+			viewModel = new CategoryVM();
+		} else {
+			viewModel = categService.getVMById(id);
+		}
 		bind();
 		txtName.getStyleClass().removeIf(style -> style.equals("txtError"));
 		txtName.setEditable(false);

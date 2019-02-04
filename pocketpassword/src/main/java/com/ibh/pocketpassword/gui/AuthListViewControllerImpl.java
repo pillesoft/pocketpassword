@@ -1,45 +1,51 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.ibh.pocketpassword.gui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.ibh.pocketpassword.service.AuthenticationService;
-//import com.ibh.spdesktop.bl.BusinessLogic;
-//import com.ibh.spdesktop.message.CrudMessage;
-//import com.ibh.spdesktop.message.MessageService;
-//import com.ibh.spdesktop.message.RefreshDataMessage;
-//import com.ibh.spdesktop.message.UIContentMessage;
+import com.ibh.pocketpassword.service.AuthLimitedService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
-
+import javafx.event.ActionEvent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 @Component
 public class AuthListViewControllerImpl implements Initializable {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AuthListViewControllerImpl.class);
+
 	@Autowired
-	private AuthenticationService service;
+	private AuthLimitedService service;
 	@Autowired
 	private AuthDetailsViewController detailsController;
-	
+	@Autowired
+	private AuthCrudController crudController;
+	@Autowired
+	private ApplicationContext appContext;
+
 	@FXML
 	private TableView<AuthLimitedVM> authTable;
 	@FXML
@@ -48,6 +54,8 @@ public class AuthListViewControllerImpl implements Initializable {
 	private TableColumn<AuthLimitedVM, String> titleColumn;
 	@FXML
 	private TableColumn<AuthLimitedVM, Integer> howOldColumn;
+	@FXML
+	private TableColumn<AuthLimitedVM, Void> actionColumn;
 
 	@FXML
 	private TextField categoryFilter;
@@ -57,6 +65,7 @@ public class AuthListViewControllerImpl implements Initializable {
 	@FXML
 	private VBox crudContainer;
 
+	private ResourceBundle bundle;
 	private ObservableList<AuthLimitedVM> data;
 	private FilteredList<AuthLimitedVM> filteredData;
 	private AuthLimitedVM currentData = null;
@@ -64,57 +73,54 @@ public class AuthListViewControllerImpl implements Initializable {
 	@Override
 	public void initialize(URL url, ResourceBundle bundle) {
 
-//		MessageService.register(RefreshDataMessage.class, (arg) -> {
-//			reloadData();
-//		});
-//		MessageService.register(UIContentMessage.class, (arg) -> {
-//			setContent((UIContentMessage)arg);
-//		});
+		this.bundle = bundle;
 
 		categoryColumn.setCellValueFactory(cellData -> cellData.getValue().getCategory());
 		titleColumn.setCellValueFactory(cellData -> cellData.getValue().getTitle());
 		howOldColumn.setCellValueFactory(cellData -> cellData.getValue().getNumberOfDays().asObject());
-//		howOldColumn.setCellValueFactory(new PropertyValueFactory<AuthLimitedVM, Integer>("numberOfDays"));
-//		howOldColumn
-//				.setCellFactory(new Callback<TableColumn<AuthLimitedVM, Integer>, TableCell<AuthLimitedVM, Integer>>() {
-//
-//					@Override
-//					public TableCell<AuthLimitedVM, Integer> call(TableColumn<AuthLimitedVM, Integer> param) {
-//						return new TableCell<AuthLimitedVM, Integer>() {
-//							@Override
-//							protected void updateItem(Integer howold, boolean empty) {
-//								super.updateItem(howold, empty);
-//								if (empty) {
-//									setText(null);
-//								} else {
-//									setText(Integer.toString(howold));
-//								}
-//							}
-//						};
-//					}
-//				});
-		// howOldColumn.setCellFactory(new Callback<TableColumn<AuthLimitedVM, Integer>,
-		// TableCell<AuthLimitedVM, Integer>>() {
-		// @Override
-		// public TableCell<AuthLimitedVM, Integer> call(TableColumn<AuthLimitedVM,
-		// Integer> col) {
-		// return new TableCell<AuthLimitedVM, Integer>() {
-		// @Override
-		// protected void updateItem(Integer howold, boolean empty) {
-		// super.updateItem(howold, empty);
-		// if (empty) {
-		// setText(null);
-		// } else {
-		// setText(Integer.toString(howold));
-		// }
-		// }
-		// };
-		// }
-		// });
+		actionColumn.setCellFactory(new Callback<TableColumn<AuthLimitedVM, Void>, TableCell<AuthLimitedVM, Void>>() {
+
+			@Override
+			public TableCell<AuthLimitedVM, Void> call(TableColumn<AuthLimitedVM, Void> param) {
+				final TableCell<AuthLimitedVM, Void> cell = new TableCell<AuthLimitedVM, Void>() {
+
+					private final Button btnEdit = new Button("Edit");
+					private final Button btnDelete = new Button("Delete");
+					{
+						btnEdit.setOnAction((ActionEvent event) -> {
+							AuthLimitedVM data = getTableView().getItems().get(getIndex());
+							System.out.println("Edit - selectedData: " + data.getId());
+							setContentCenter(ViewEnum.AuthCrudView);
+							updateContainer(CRUDEnum.Update, data.getId());
+						});
+
+						btnDelete.setOnAction((ActionEvent event) -> {
+							AuthLimitedVM data = getTableView().getItems().get(getIndex());
+							System.out.println("Delete - selectedData: " + data.getId());
+							setContentCenter(ViewEnum.AuthCrudView);
+							updateContainer(CRUDEnum.Delete, data.getId());
+						});
+					}
+
+					private final HBox actionContainer = new HBox(2D, btnEdit, btnDelete);
+
+					@Override
+					public void updateItem(Void item, boolean empty) {
+						super.updateItem(item, empty);
+						if (empty) {
+							setGraphic(null);
+						} else {
+							setGraphic(actionContainer);
+						}
+					}
+				};
+				return cell;
+			}
+		});
 
 		authTable.getSelectionModel().selectedItemProperty().addListener(((observable, oldvalue, newvalue) -> {
 			currentData = newvalue;
-			showDetails();
+			updateContainer();
 		}));
 
 		categoryFilter.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -136,42 +142,49 @@ public class AuthListViewControllerImpl implements Initializable {
 				}
 			}
 		});
-		
+
+		data = FXCollections.observableList(service.getVMData());
+		filteredData = new FilteredList<>(data, a->true);
+	
+		if (!data.isEmpty()) {
+			setContentCenter(ViewEnum.AuthDetailsView);
+			reloadData();
+		}
+	}
+
+	public void postCrud() {
+		data = FXCollections.observableList(service.getVMData());
+		filteredData = new FilteredList<>(data, a->true);
+		if (data.isEmpty()) {
+			currentData = null;
+			crudContainer.getChildren().clear();
+		} else {
+			setContentCenter(ViewEnum.AuthDetailsView);
+		}
 		reloadData();
+	}
+	
+	private void setContentCenter(ViewEnum view) {
+		crudContainer.getChildren().clear();
+
+		Node node;
+		try {
+
+			FXMLLoader loader = new FXMLLoader(
+					getClass().getResource(String.format("/fxml/%s.fxml", view.getViewFile())), this.bundle);
+			loader.setControllerFactory(appContext::getBean);
+			node = loader.load();
+
+			crudContainer.getChildren().add(node);
+
+		} catch (IOException | SecurityException | IllegalArgumentException ex) {
+			LOG.warn("exception", ex);
+		}
 	}
 
 	private void reloadData() {
 
-		data = FXCollections.observableList(service.getVMData());
-
-		filteredData = new FilteredList<>(data, a -> {
-			String cfilter = categoryFilter.getText();
-			String tfilter = titleFilter.getText();
-			
-			String lowercFilter = cfilter.toLowerCase();
-			String lowertFilter = tfilter.toLowerCase();
-			if(StringUtils.isEmpty(cfilter) && StringUtils.isEmpty(tfilter)) {
-				//both are empty
-				return true;
-			} else if (((cfilter != null && !cfilter.isEmpty())
-					&& a.getCategory().getValue().toLowerCase().contains(lowercFilter))
-					&& ((tfilter != null && !tfilter.isEmpty())
-							&& a.getTitle().getValue().toLowerCase().contains(lowertFilter))) {
-				// none of empty
-				return true;
-			} else if (((cfilter != null && !cfilter.isEmpty())
-					&& a.getCategory().getValue().toLowerCase().contains(lowercFilter))
-					&& (tfilter == null || tfilter.isEmpty())) {
-				// title is empty
-				return true;
-			} else if ((cfilter == null || cfilter.isEmpty()) && ((tfilter != null && !tfilter.isEmpty())
-					&& a.getTitle().getValue().toLowerCase().contains(lowertFilter))) {
-				// category is empty
-				return true;
-			}
-			return false;
-			
-		});
+		doFilter();
 
 		SortedList<AuthLimitedVM> sortedData = new SortedList<>(filteredData);
 		sortedData.comparatorProperty().bind(authTable.comparatorProperty());
@@ -181,27 +194,26 @@ public class AuthListViewControllerImpl implements Initializable {
 			currentData = sortedData.get(0);
 		}
 
-		showDetails();
+		updateContainer();
 
 	}
 
-	private void showDetails() {
+	private void updateContainer() {
 
 		if (currentData != null) {
-			detailsController.refresh(CRUDEnum.View, currentData.getId().get());
+			detailsController.refresh(CRUDEnum.View, currentData.getId());
 		}
+	}
+
+	private void updateContainer(CRUDEnum crud, Long id) {
+		crudController.refresh(crud, id);
 	}
 
 	@FXML
 	public void handleNew() {
-//		setUIContent(crudContainer,
-//				new CrudMessage(ViewEnum.AuthCRUDView, 0, CRUDEnum.New));
+		setContentCenter(ViewEnum.AuthCrudView);
+		updateContainer(CRUDEnum.New, 0L);
 	}
-
-//	private void setContent(UIContentMessage msg) {
-//		setUIContent(crudContainer,
-//				new CrudMessage(msg.getContent(), msg.getId(), msg.getCrud()));		
-//	}
 
 	@FXML
 	public void handleClearFilter() {
@@ -218,20 +230,23 @@ public class AuthListViewControllerImpl implements Initializable {
 
 			String lowercFilter = cfilter.toLowerCase();
 			String lowertFilter = tfilter.toLowerCase();
+			// both are empty
+			if (StringUtils.isEmpty(cfilter) && StringUtils.isEmpty(tfilter)) {
+				return true;
 			// none of empty
-			if (((cfilter != null && !cfilter.isEmpty())
+			} else if (((cfilter != null && !cfilter.isEmpty())
 					&& a.getCategory().getValue().toLowerCase().contains(lowercFilter))
 					&& ((tfilter != null && !tfilter.isEmpty())
 							&& a.getTitle().getValue().toLowerCase().contains(lowertFilter))) {
 				return true;
+			// title is empty
 			} else if (((cfilter != null && !cfilter.isEmpty())
 					&& a.getCategory().getValue().toLowerCase().contains(lowercFilter))
 					&& (tfilter == null || tfilter.isEmpty())) {
-				// title is empty
 				return true;
+			// category is empty
 			} else if ((cfilter == null || cfilter.isEmpty()) && ((tfilter != null && !tfilter.isEmpty())
 					&& a.getTitle().getValue().toLowerCase().contains(lowertFilter))) {
-				// category is empty
 				return true;
 			}
 			return false;

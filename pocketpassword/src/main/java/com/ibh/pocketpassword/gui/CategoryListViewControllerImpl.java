@@ -5,15 +5,15 @@
  */
 package com.ibh.pocketpassword.gui;
 
-import com.ibh.pocketpassword.service.CategoryService;
-import com.ibh.pocketpassword.viewmodel.CategoryVM;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.ibh.pocketpassword.service.CategoryService;
+import com.ibh.pocketpassword.viewmodel.CategoryVM;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,9 +21,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;

@@ -14,12 +14,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" stylesheets="@../style/Application.css" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.ibh.pocketpassword.gui.AuthCrudControllerImpl">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+      <VBox minHeight="-Infinity" minWidth="-Infinity" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
             <Label styleClass="viewTitle" text="Label" />
-            <GridPane hgap="10.0" vgap="10.0" VBox.vgrow="SOMETIMES">
+            <GridPane hgap="10.0" minWidth="-Infinity" vgap="10.0" VBox.vgrow="SOMETIMES">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" prefWidth="150.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" prefWidth="200.0" />
@@ -83,10 +83,10 @@
             </GridPane>
             <VBox alignment="TOP_CENTER">
                <children>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                  <HBox alignment="CENTER_RIGHT" spacing="5.0">
                      <children>
                         <Button fx:id="cmdSave" defaultButton="false" mnemonicParsing="false" onAction="#handleSave" text="Save" />
-                        <Button cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
+                        <Button fx:id="cmdCancel" cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
                      </children>
                      <VBox.margin>
                         <Insets top="5.0" />

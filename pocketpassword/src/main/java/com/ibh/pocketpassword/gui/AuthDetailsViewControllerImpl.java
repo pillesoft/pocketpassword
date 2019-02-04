@@ -3,6 +3,7 @@ package com.ibh.pocketpassword.gui;
 import java.io.IOException;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
@@ -10,23 +11,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ibh.pocketpassword.service.AuthenticationService;
+import com.ibh.pocketpassword.service.AuthLimitedService;
+import com.ibh.pocketpassword.service.AuthUserPwdService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 import com.ibh.pocketpassword.viewmodel.AuthUserPwdVM;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
@@ -40,11 +38,13 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private static final Logger LOG = LoggerFactory.getLogger(AuthDetailsViewControllerImpl.class);
 	
 	@Autowired
-	private AuthenticationService service;
+	private AuthLimitedService service;
+	@Autowired
+	private AuthUserPwdService userPwdService;
+	
 	private Clipboard clpbrd; 
 	
 	private AuthLimitedVM viewModel;
-//	private CRUDEnum mode;
 	
 	private final String ShowAuthPaneTitle = "Show Authentication";
 	private final Integer TIMERVALUE = 10;
@@ -61,21 +61,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private Label lblCreatedOn;
 	
 	@FXML
-	private TextField txtTitle;
-	@FXML
-	private TextField txtCategory;
-	@FXML
-	private Hyperlink txtWebAddress;
-	@FXML
-	private DatePicker dpValidFrom;
-	@FXML
-	private TextArea txaDescription;
-	@FXML
 	private TitledPane tPaneShowAuth;
-	@FXML
-	private Button cmdEdit;
-	@FXML
-	private Button cmdDelete;
+
 	@FXML
 	private ToggleButton tbtnShowHide;
 	@FXML
@@ -86,11 +73,6 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private TextField txtShowUserName;
 	@FXML
 	private TextField txtShowPassword;
-
-	@FXML
-	public void handleEdit() {
-//		MessageService.send(UIContentMessage.class, new UIContentMessage(ViewEnum.AuthCRUDView, vm.getId().get(), CRUDEnum.Update));
-	}
 
 	@FXML
 	public void handleCopyUserName() {
@@ -108,30 +90,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	}
 
 	@FXML
-	public void handleDelete() {
-
-//		getBl().getAuthRepos().delete(vm.getId().get());
-//
-//		MessageService.send(RefreshDataMessage.class, new RefreshDataMessage(ViewEnum.AuthListView));
-
-	}
-
-//	@FXML
-//	public void handleWebAddressLink() {
-//		String command = String.format("start %s %s", "firefox", txtWebAddress.getText());
-//		try {
-//			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
-//			// this is linux
-//			// Runtime.getRuntime().exec(new String[] { "chromium-browser",
-//			// "http://example.com/" });
-//		} catch (IOException ex) {
-//			LOG.warn("cannot open browser", ex);
-//		}
-//	}
-
-	@FXML
 	public void handleTitleLink() {
-		String command = String.format("start %s %s", "firefox", viewModel.getWebUrl().getValue());
+		String command = String.format("start %s %s", "firefox", viewModel.getWebUrl());
 		try {
 			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
 			// this is linux
@@ -169,7 +129,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		tPaneShowAuth.setExpanded(false);
 		tPaneShowAuth.expandedProperty().addListener((obs, wasExpanded, isExpanded)->{
 			if(isExpanded) {
-				AuthUserPwdVM upvm = service.getUserPwd(viewModel.getId().longValue());
+				AuthUserPwdVM upvm = userPwdService.getVMById(viewModel.getId().longValue());
 				txtShowUserName.setText(upvm.getUserName());
 				txtShowPassword.setText(upvm.getPassword());
 				
@@ -207,7 +167,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
         tPaneShowAuth.setText(ShowAuthPaneTitle);
 
         clpbrd.clear();
-        
+        tbtnShowHide.setSelected(false);
 		txtShowUserName.setText(null);
 		txtShowPassword.setText(null);
 
@@ -218,51 +178,28 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		if(timeline != null) {
 			closeShowAuthPane();
 		}
-		if (viewModel != null) {
-			unbind();
-		}
-		
-//		this.mode = mode;
-		viewModel = service.getVMById(id); 
-		bind();
-//		txtName.getStyleClass().removeIf(style -> style.equals("txtError"));
-//		txtName.setEditable(false);
-//		cpColor.setEditable(false);
-//		cmdSave.setVisible(false);
-//		cmdCancel.setVisible(false);
-//		
-//		if (mode != CRUDEnum.View) {
-//			cmdSave.setVisible(true);
-//			cmdCancel.setVisible(true);
-//		}
-//		if (mode == CRUDEnum.New || mode == CRUDEnum.Update) {
-//			txtName.setEditable(true);
-//			cpColor.setEditable(true);
-//		}
-//		if (mode == CRUDEnum.Delete) {
-//			cmdSave.setText("Delete");
+//		if (viewModel == null) {
+//			unbind();
 //		} else {
-//			cmdSave.setText("Save");
+			viewModel = service.getVMById(id); 
+			bind();	
 //		}
+		
 	}
 
 	private void bind() {
 		hlTitle.setText(viewModel.getTitle().get());
 		lblCategName.setText(viewModel.getCategory().get());
 		lblDaysOld.setText(String.valueOf(viewModel.getNumberOfDays().intValue()));
-		lblCreatedOn.setText(viewModel.getValidFrom().format(DateTimeFormatter.ISO_LOCAL_DATE));
-		
-//		txtTitle.textProperty().bindBidirectional(viewModel.getTitle());
-//		txtCategory.textProperty().bindBidirectional(viewModel.getCategory());
-//		txtWebAddress.textProperty().bindBidirectional(viewModel.getWebUrl());
-//		dpValidFrom.valueProperty().bindBidirectional(viewModel.getValidFrom());
-//		txaDescription.textProperty().bindBidirectional(viewModel.getDescription());
+		lblCreatedOn.setText(viewModel.getValidFrom().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
 	}
 
-	private void unbind() {
-//		txtTitle.textProperty().unbindBidirectional(viewModel.getTitle());
-//		cpColor.valueProperty().unbindBidirectional(viewModel.colorProperty());
-	}
+//	private void unbind() {
+//		hlTitle.setText(null);
+//		lblCategName.setText(null);
+//		lblDaysOld.setText("N/A");
+//		lblCreatedOn.setText(null);
+//	}
 	
 //	@Override
 //	public void setUpValidators() {

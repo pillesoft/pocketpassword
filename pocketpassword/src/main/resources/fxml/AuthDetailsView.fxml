@@ -63,15 +63,6 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" spacing="5.0">
-               <children>
-                  <Button fx:id="cmdEdit" defaultButton="false" mnemonicParsing="false" onAction="#handleEdit" text="Edit" />
-                  <Button fx:id="cmdDelete" defaultButton="false" mnemonicParsing="false" onAction="#handleDelete" text="Delete" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </VBox.margin>
-            </HBox>
             <TitledPane fx:id="tPaneShowAuth" text="Show Auhentication">
                <content>
                   <GridPane hgap="3.0" vgap="3.0">
