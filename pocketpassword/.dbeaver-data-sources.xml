@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-sources>
+	<data-source id="h2_server-168c3a56a9f-611c262bf9aec272" provider="generic" driver="h2_server" name="H2 - test3" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="8082" server="" database="c:/temp/db/test3" url="jdbc:h2:tcp://localhost/c:/temp/db/test3" user="ivan" password="EmTn" type="dev"/>
+	</data-source>
+	<filters/>
+</data-sources>

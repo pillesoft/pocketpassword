@@ -2,10 +2,12 @@ package com.ibh.pocketpassword.gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,8 @@ import javafx.scene.layout.BorderPane;
 @Component
 public class MainViewControllerImpl implements Initializable {
 
+	private static final Logger LOG = LoggerFactory.getLogger(MainViewControllerImpl.class);
+
 	@Autowired
 	private ApplicationContext appContext;
 	
@@ -35,13 +39,14 @@ public class MainViewControllerImpl implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle bundle) {
+	  
 
 	  this.bundle = bundle;
 	  
-//    setBundle(rb);
-
-    isToolbarDisabled = new SimpleBooleanProperty(false);
-    toolbar.disableProperty().bind(isToolbarDisabled);
+      isToolbarDisabled = new SimpleBooleanProperty(true);
+      toolbar.disableProperty().bind(isToolbarDisabled);
+    
+//      setContentCenter(ViewEnum.Login);
 
   }
 
@@ -57,19 +62,15 @@ public class MainViewControllerImpl implements Initializable {
       
       borderPane.centerProperty().setValue(node);
 
-    } catch (IOException ex) {
-      Logger.getLogger(MainViewControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (SecurityException ex) {
-      Logger.getLogger(MainViewControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
-    } catch (IllegalArgumentException ex) {
-      Logger.getLogger(MainViewControllerImpl.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException | SecurityException | IllegalArgumentException ex) {
+    	LOG.warn("Cannot load view component", ex);
     }
   }
 
-//  private void postLogin() {
-//    System.out.println("postLogin");
-//    isToolbarDisabled.setValue(false);
-//  }
+  public void postLogin() {
+    System.out.println("postLogin");
+    isToolbarDisabled.setValue(false);
+  }
 
   @FXML
   public void handleTlbExit() {
