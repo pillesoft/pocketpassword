@@ -92,6 +92,7 @@ public class PocketpasswordApplication extends Application {
         Stage loginDialog = new LoginDialog(primaryStage, null, (c)->postLogin(c));
         loginDialog.initModality(Modality.APPLICATION_MODAL);
         loginDialog.sizeToScene();
+        loginDialog.setOnHidden(e -> mainController.loginHidden());
         loginDialog.showAndWait();
 		
 	}

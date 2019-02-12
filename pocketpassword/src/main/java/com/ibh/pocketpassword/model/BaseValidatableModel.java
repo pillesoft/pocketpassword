@@ -2,7 +2,9 @@ package com.ibh.pocketpassword.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -12,20 +14,26 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.validator.internal.engine.path.PathImpl;
 
-import com.ibh.pocketpassword.validation.VMValidation;
+import com.ibh.pocketpassword.validation.ViewModelValidation;
+
+import javafx.scene.control.Control;
+
+import com.ibh.pocketpassword.validation.ValidationError;
 import com.ibh.pocketpassword.validation.ValidationException;
 
-public abstract class BaseValidatableModel<T> extends BaseModel implements VMValidation {
+public abstract class BaseValidatableModel<T> extends BaseModel implements ViewModelValidation {
 	
 	private static final long serialVersionUID = 1L;
-	private HashMap<String, List<String>> validationErrors;
+	private Set<ValidationError> validationErrors;
+	  private Map<String, Control> boundedControls;
 
 	  public BaseValidatableModel() {
-	    validationErrors = new HashMap<>();
+	    validationErrors = new HashSet<ValidationError>();
+	    boundedControls = new HashMap<>();
 	  }
 	  
 	  @Override
-	  public HashMap<String, List<String>> getValidationErrors() {
+	  public Set<ValidationError> getValidationErrors() {
 	    return validationErrors;
 	  }
 
@@ -35,7 +43,7 @@ public abstract class BaseValidatableModel<T> extends BaseModel implements VMVal
 	  }
 
 	  protected void validate() throws ValidationException {
-	    validationErrors = new HashMap<>();
+	    validationErrors = new HashSet<ValidationError>();
 	    
 	    ValidatorFactory valfact = Validation.buildDefaultValidatorFactory();
 	    Validator validator = valfact.getValidator();
@@ -50,13 +58,21 @@ public abstract class BaseValidatableModel<T> extends BaseModel implements VMVal
 	  private void convertErrors(Set<ConstraintViolation<BaseValidatableModel<T>>> errors) {
 	    errors.stream().forEach((err) -> {
 	      String propname = ((PathImpl) err.getPropertyPath()).getLeafNode().getName();
-	      if (validationErrors.containsKey(propname)) {
-	        validationErrors.get(propname).add(err.getMessage());
+	      
+	      ValidationError ve = new ValidationError(propname, err.getMessage());
+	      if (validationErrors.contains(ve)) {
+	    	  ve.addErrorMessage(err.getMessage());
 	      } else {
-	        List<String> v = new ArrayList<>();
-	        v.add(err.getMessage());
-	        validationErrors.put(propname, v);
+	    	  validationErrors.add(ve);
 	      }
+	      
+//	      if (validationErrors.containsKey(propname)) {
+//	        validationErrors.get(propname).add(err.getMessage());
+//	      } else {
+//	        List<String> v = new ArrayList<>();
+//	        v.add(err.getMessage());
+//	        validationErrors.put(propname, v);
+//	      }
 	    });
 	  }
 

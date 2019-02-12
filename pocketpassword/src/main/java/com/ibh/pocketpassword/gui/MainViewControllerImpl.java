@@ -34,7 +34,7 @@ public class MainViewControllerImpl implements Initializable {
   @FXML
   private ToolBar toolbar;
 
-  private BooleanProperty isToolbarDisabled;
+  private BooleanProperty isAuthenticated;
   private ResourceBundle bundle;
 
   @Override
@@ -43,8 +43,8 @@ public class MainViewControllerImpl implements Initializable {
 
 	  this.bundle = bundle;
 	  
-      isToolbarDisabled = new SimpleBooleanProperty(true);
-      toolbar.disableProperty().bind(isToolbarDisabled);
+      isAuthenticated = new SimpleBooleanProperty(false);
+      toolbar.disableProperty().bind(isAuthenticated.not());
     
 //      setContentCenter(ViewEnum.Login);
 
@@ -69,7 +69,7 @@ public class MainViewControllerImpl implements Initializable {
 
   public void postLogin() {
     System.out.println("postLogin");
-    isToolbarDisabled.setValue(false);
+    isAuthenticated.setValue(false);
   }
 
   @FXML
@@ -91,5 +91,11 @@ public class MainViewControllerImpl implements Initializable {
   public void handleTlbAbout() {
 
   }
+
+	public void loginHidden() {
+		if(isAuthenticated.not().get()) {
+			Platform.exit();
+		}
+	}
 
 }

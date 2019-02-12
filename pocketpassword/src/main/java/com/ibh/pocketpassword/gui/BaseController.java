@@ -1,5 +1,6 @@
 package com.ibh.pocketpassword.gui;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.ibh.pocketpassword.validation.ValidationException;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Border;
@@ -18,16 +21,19 @@ import javafx.scene.paint.Paint;
 
 public abstract class BaseController implements CrudController {
 	private static final Logger LOG = LoggerFactory.getLogger(BaseController.class);
-	private Map<String, Control> validatedControls;
-	
-	
+	private final Map<String, Control> boundedControls = new HashMap<>();
+
+	protected void bindBidirectional(StringProperty stringProperty, StringProperty stringProperty2) {
+		Bindings.bindBidirectional(stringProperty, stringProperty2);
+		boundedControls.put(stringProperty.getName(), (Control) stringProperty2.getBean());
+	}
 	
 	protected void setControlStateNormal() {
 		BorderStroke bs = new BorderStroke(Paint.valueOf("GREY"), BorderStrokeStyle.SOLID, CornerRadii.EMPTY,
 				BorderWidths.DEFAULT);
 		Border b = new Border(bs);
 
-		validatedControls.forEach((k, v) -> {
+		boundedControls.forEach((k, v) -> {
 			v.borderProperty().set(b);
 			v.tooltipProperty().set(null);
 		});
@@ -38,14 +44,14 @@ public abstract class BaseController implements CrudController {
 		BorderStroke bs = new BorderStroke(Paint.valueOf("RED"), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, width);
 		Border b = new Border(bs);
 
-		valexc.getValidationError().forEach((field, errs) -> {
-			Control ctrl = validatedControls.get(field);
+		valexc.getValidationError().forEach((err) -> {
+			Control ctrl = boundedControls.get(err.getFieldName());
 			if (ctrl == null) {
-				LOG.warn("there is no control for field: {}", field);
+				LOG.warn("there is no control for field: {}", err.getFieldName());
 			} else {
 				ctrl.borderProperty().set(b);
 
-				Tooltip tt = new Tooltip(String.join("\n", errs));
+				Tooltip tt = new Tooltip(String.join("\n", err.getErrorMessages()));
 				ctrl.tooltipProperty().set(tt);
 			}
 		});

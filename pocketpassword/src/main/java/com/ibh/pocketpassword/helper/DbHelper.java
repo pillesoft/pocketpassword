@@ -24,7 +24,7 @@ public final class DbHelper {
 
 	static {
 		try {
-			try (InputStream is = DbHelper.class.getResourceAsStream("/config.properties")) {
+			try (InputStream is = DbHelper.class.getResourceAsStream("/application.properties")) {
 				PROPERTIES.load(is);
 			}
 		} catch (IOException ex) {
@@ -39,7 +39,7 @@ public final class DbHelper {
 
 		Path dbpathname = getDbFileName(dbname);
 		if (!Files.exists(dbpathname)) {
-			throw new IBHDatabaseException(IBHDatabaseException.DBException.AVAILABLE);
+			throw new IBHDatabaseException(IBHDatabaseException.DBException.NOTAVAILABLE);
 		}
 
 		try (BasicDataSource bds = new BasicDataSource()) {
@@ -60,7 +60,7 @@ public final class DbHelper {
 	}
 
 	private static Path getDbPath(String dbName) {
-		Path dbpath = Paths.get(PROPERTIES.getProperty("DBFolder"), dbName);
+		Path dbpath = Paths.get(PROPERTIES.getProperty("app.dbfolder"), dbName);
 
 		return dbpath;
 	}

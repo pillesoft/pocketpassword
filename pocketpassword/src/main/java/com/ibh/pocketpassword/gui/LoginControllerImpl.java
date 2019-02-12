@@ -44,8 +44,6 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	@FXML
 	private void handleLogin() {
 
-		String dbpath = "c:/temp/db";
-
 		setControlStateNormal();
 		lblErrorText.setText("");
 
@@ -97,10 +95,14 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		viewModel = new LoginVM();
+		
+		bindBidirectional(viewModel.getDatabaseName(), txtDatabaseName.textProperty());
+		bindBidirectional(viewModel.getUserName(), txtUserName.textProperty());
+		bindBidirectional(viewModel.getPassword(), txtPassword.textProperty());
 
-		txtDatabaseName.textProperty().bindBidirectional(viewModel.getDatabaseName());
-		txtUserName.textProperty().bindBidirectional(viewModel.getUserName());
-		txtPassword.textProperty().bindBidirectional(viewModel.getPassword());
+//		txtDatabaseName.textProperty().bindBidirectional(viewModel.getDatabaseName());
+//		txtUserName.textProperty().bindBidirectional(viewModel.getUserName());
+//		txtPassword.textProperty().bindBidirectional(viewModel.getPassword());
 
 //    setInstance(vm);
 

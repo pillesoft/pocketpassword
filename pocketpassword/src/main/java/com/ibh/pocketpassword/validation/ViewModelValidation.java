@@ -2,10 +2,12 @@ package com.ibh.pocketpassword.validation;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
-public interface VMValidation {
+public interface ViewModelValidation {
   void validateModel() throws ValidationException;
   boolean isValid();
-  HashMap<String, List<String>> getValidationErrors();
+  Set<ValidationError> getValidationErrors();
 }

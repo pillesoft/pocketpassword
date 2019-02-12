@@ -1,6 +1,8 @@
 package com.ibh.pocketpassword.viewmodel;
 
 import com.ibh.pocketpassword.validation.ValidationException;
+
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javax.validation.constraints.NotEmpty;

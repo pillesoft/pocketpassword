@@ -43,14 +43,23 @@ public class CategoryDetailsViewControllerImpl implements CategoryDetailsViewCon
 		}
 		clvController.reloadData();
 		} catch (ValidationException ve) {
-			ve.getValidationError().entrySet().forEach(m -> {
-				if(m.getKey().equals("name")) {
-					txtName.getStyleClass().add("txtError");
-					Tooltip msg = new Tooltip(String.join(System.lineSeparator(), m.getValue()));
-					msg.getStyleClass().add("tooltip-error");							
-					txtName.setTooltip(msg);
-				}
-			});
+			
+//			ve.getValidationError().forEach(a->{
+//				a.getBoundedControl().getStyleClass().add("txtError");
+//				Tooltip msg = new Tooltip(String.join(System.lineSeparator(), a.getErrorMessages()));
+//				msg.getStyleClass().add("tooltip-error");							
+//				a.getBoundedControl().setTooltip(msg);
+//			});
+//			
+//			
+//			ve.getValidationError().entrySet().forEach(m -> {
+//				if(m.getKey().equals("name")) {
+//					txtName.getStyleClass().add("txtError");
+//					Tooltip msg = new Tooltip(String.join(System.lineSeparator(), m.getValue()));
+//					msg.getStyleClass().add("tooltip-error");							
+//					txtName.setTooltip(msg);
+//				}
+//			});
 		}
 	}
 	
