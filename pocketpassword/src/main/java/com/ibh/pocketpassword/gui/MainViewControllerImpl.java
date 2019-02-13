@@ -2,6 +2,8 @@ package com.ibh.pocketpassword.gui;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
@@ -10,7 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import com.ibh.pocketpassword.service.SettingService;
+import com.ibh.pocketpassword.viewmodel.SettingVM;
+
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -22,11 +30,10 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 
 @Component
-public class MainViewControllerImpl implements Initializable {
+public class MainViewControllerImpl implements Initializable, ApplicationListener<ContextRefreshedEvent> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(MainViewControllerImpl.class);
 
-	@Autowired
 	private ApplicationContext appContext;
 	
   @FXML
@@ -67,9 +74,16 @@ public class MainViewControllerImpl implements Initializable {
     }
   }
 
-  public void postLogin() {
-    System.out.println("postLogin");
-    isAuthenticated.setValue(false);
+  public void postLogin(ApplicationContext appctx) {
+//    System.out.println("postLogin");
+    
+    this.appContext = appctx;
+    isAuthenticated.setValue(true);
+
+	SettingService ss = this.appContext.getBean(SettingService.class);
+	ss.getDbCreateTimestamp();
+
+    setContentCenter(ViewEnum.AuthListView);
   }
 
   @FXML
@@ -96,6 +110,15 @@ public class MainViewControllerImpl implements Initializable {
 		if(isAuthenticated.not().get()) {
 			Platform.exit();
 		}
+	}
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+
+//		SettingService ss = event.getApplicationContext().getBean(SettingService.class);
+//		ss.getDbCreateTimestamp();
+		
+		
 	}
 
 }

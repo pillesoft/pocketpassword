@@ -37,29 +37,35 @@ public final class DbHelper {
 
 	public static void tryConnect(String dbname, String username, String password) throws IBHDatabaseException, SQLException {
 
-		Path dbpathname = getDbFileName(dbname);
-		if (!Files.exists(dbpathname)) {
+		if (!Files.exists(getDbFileName(dbname))) {
 			throw new IBHDatabaseException(IBHDatabaseException.DBException.NOTAVAILABLE);
 		}
 
 		try (BasicDataSource bds = new BasicDataSource()) {
 			bds.setDriverClassName("org.h2.Driver");
-			String url = String.format("jdbc:h2:tcp://localhost/%s;IFEXISTS=TRUE", dbpathname.toString());
+			String url = String.format("jdbc:h2:tcp://localhost/%s;IFEXISTS=TRUE", getDbPath(dbname).toString());
 			bds.setUrl(url);
 			bds.setUsername(username);
 			bds.setPassword(password);
 
 			try (Connection conn = bds.getConnection()) {
 				DatabaseMetaData meta = conn.getMetaData();
-				System.out.println(meta.getURL());
-				System.out.println(meta.getUserName());
+				LOG.info("db url: {}", meta.getURL());
+				LOG.info("db username: {}", meta.getUserName());
 			}
 
 		}
 
 	}
 
-	private static Path getDbPath(String dbName) {
+	public static void tryCreate(String dbname) throws IBHDatabaseException {
+		Path dbpathname = getDbFileName(dbname);
+		if (Files.exists(dbpathname)) {
+			throw new IBHDatabaseException(IBHDatabaseException.DBException.AVAILABLE);
+		}
+	}
+	
+	public static Path getDbPath(String dbName) {
 		Path dbpath = Paths.get(PROPERTIES.getProperty("app.dbfolder"), dbName);
 
 		return dbpath;

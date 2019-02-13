@@ -18,6 +18,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
@@ -50,13 +51,17 @@ public class LoginControllerImpl extends BaseController implements Initializable
 		try {
 			viewModel.validateModel();
 
-			DbHelper.tryConnect(viewModel.getDatabaseName().get(), viewModel.getUserName().get(), viewModel.getPassword().get());
-			
+			DbHelper.tryConnect(viewModel.getDatabaseName().get(), viewModel.getUserName().get(),
+					viewModel.getPassword().get());
+
 			Map<String, String> creds = new HashMap<>();
 			creds.put("dbname", viewModel.getDatabaseName().get());
 			creds.put("username", viewModel.getUserName().get());
 			creds.put("password", viewModel.getPassword().get());
 			this.postLoginHandler.accept(creds);
+
+		    final Stage loginDialog = (Stage) txtDatabaseName.getScene().getWindow();
+		    loginDialog.close();
 
 		} catch (IBHDatabaseException dexc) {
 			lblErrorText.setText(dexc.getType().getDescription());
@@ -64,29 +69,37 @@ public class LoginControllerImpl extends BaseController implements Initializable
 			setControlStateError(exc);
 		} catch (Exception exc) {
 			lblErrorText.setText("Wrong User name / Password");
+			LOG.warn("exception", exc);
 		}
 	}
 
 	@FXML
 	private void handleCreateDB() {
-//    setControlStateNormal();
+		setControlStateNormal();
 		lblErrorText.setText("");
 
-		LOG.debug("handleCreateDB");
+		try {
+			viewModel.validateModel();
+			
+			DbHelper.tryCreate(viewModel.getDatabaseName().get());
+			
+			Map<String, String> creds = new HashMap<>();
+			creds.put("dbname", viewModel.getDatabaseName().get());
+			creds.put("username", viewModel.getUserName().get());
+			creds.put("password", viewModel.getPassword().get());
+			this.postLoginHandler.accept(creds);
 
-//    try {
-//      vm.validateModel();
-//
-//      getBl().createDB(txtUserName.getText(), txtPassword.getText().toCharArray());
-//      getBl().login(txtUserName.getText(), txtPassword.getText().toCharArray());
-//      MessageService.send(ActionMessage.class, new ActionMessage(ViewEnum.AuthListView));
-//    } catch (ValidationException exc) {
-//      setControlStateError(exc);
-//    } catch (IBHDatabaseException dexc) {
-//      lblErrorText.setText(dexc.getType().getDescription());
-//    } catch (Exception exc) {
-//      lblErrorText.setText("Wrong User name / Password");
-//    }
+		    final Stage loginDialog = (Stage) txtDatabaseName.getScene().getWindow();
+		    loginDialog.close();
+		    
+		} catch (ValidationException exc) {
+			setControlStateError(exc);
+		} catch (IBHDatabaseException dexc) {
+			lblErrorText.setText(dexc.getType().getDescription());
+		} catch (Exception exc) {
+			lblErrorText.setText("Wrong User name / Password");
+			LOG.warn("exception", exc);
+		}
 	}
 
 	/**
@@ -95,20 +108,12 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 		viewModel = new LoginVM();
-		
+
 		bindBidirectional(viewModel.getDatabaseName(), txtDatabaseName.textProperty());
 		bindBidirectional(viewModel.getUserName(), txtUserName.textProperty());
 		bindBidirectional(viewModel.getPassword(), txtPassword.textProperty());
 
-//		txtDatabaseName.textProperty().bindBidirectional(viewModel.getDatabaseName());
-//		txtUserName.textProperty().bindBidirectional(viewModel.getUserName());
-//		txtPassword.textProperty().bindBidirectional(viewModel.getPassword());
-
-//    setInstance(vm);
-
-//    setUpValidators();
 	}
-
 
 	public LoginVM getViewModel() {
 		return viewModel;
@@ -121,20 +126,8 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	@Override
 	public void refresh(CRUDEnum mode, Long id) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//  @Override
-//  public void setUpValidators() {
-//    try {
-//      setUpValidator(txtUserName, vm.getUserName());
-//      setUpValidator(txtPassword, vm.getPassword());
-//
-//      setControlStateNormal();
-//    } catch (Exception ex) {
-//      LOG.error(ex.getMessage(), ex);
-//    }
-//
-//  }
 
 }

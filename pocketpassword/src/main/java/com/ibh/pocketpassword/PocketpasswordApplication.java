@@ -1,6 +1,7 @@
 package com.ibh.pocketpassword;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;
@@ -23,6 +25,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import com.ibh.pocketpassword.gui.LoginControllerImpl;
 import com.ibh.pocketpassword.gui.LoginDialog;
 import com.ibh.pocketpassword.gui.MainViewControllerImpl;
+import com.ibh.pocketpassword.helper.DbHelper;
 import com.ibh.pocketpassword.viewmodel.LoginVM;
 
 import javafx.application.Application;
@@ -40,23 +43,23 @@ import javafx.stage.Stage;
 @SpringBootApplication
 public class PocketpasswordApplication extends Application {
 
-    private ConfigurableApplicationContext context;
-    private Parent rootNode;
-  
-    AnnotationConfigApplicationContext annotCtx;
-    LoginControllerImpl loginController;
-    MainViewControllerImpl mainController;
-    
-    //https://wimdeblauwe.wordpress.com/2017/09/18/using-spring-boot-with-javafx/	
+	private ConfigurableApplicationContext context;
+	private Parent rootNode;
+
+	AnnotationConfigApplicationContext annotCtx;
+	LoginControllerImpl loginController;
+	MainViewControllerImpl mainController;
+
+	// https://wimdeblauwe.wordpress.com/2017/09/18/using-spring-boot-with-javafx/
 	@Override
 	public void init() throws Exception {
 
 		ResourceBundle bundle = ResourceBundle.getBundle("bundles.UIBundle", new Locale("hu"));
-        
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"), bundle);
-        //loader.setControllerFactory(context::getBean);
-        rootNode = loader.load();
-        mainController = loader.<MainViewControllerImpl>getController();
+
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"), bundle);
+		// loader.setControllerFactory(context::getBean);
+		rootNode = loader.load();
+		mainController = loader.<MainViewControllerImpl>getController();
 //        mainController.setPostLoginHandler((c)->postLogin(c));
 
 //        System.setProperty("user.db.url", "jdbc:h2:tcp://localhost/c:/temp/db/test3");
@@ -69,8 +72,7 @@ public class PocketpasswordApplication extends Application {
 //        }
 //        
 //
-    }
-
+	}
 
 	@Override
 	public void stop() throws Exception {
@@ -81,31 +83,40 @@ public class PocketpasswordApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
-        Scene scene = new Scene(rootNode, 1000, 800);
-        scene.getStylesheets().add(this.getClass().getResource("/style/Application.css").toString());
-        
-        primaryStage.setScene(scene);
-        primaryStage.centerOnScreen();
-        primaryStage.show();
-		        
-        Stage loginDialog = new LoginDialog(primaryStage, null, (c)->postLogin(c));
-        loginDialog.initModality(Modality.APPLICATION_MODAL);
-        loginDialog.sizeToScene();
-        loginDialog.setOnHidden(e -> mainController.loginHidden());
-        loginDialog.showAndWait();
-		
-	}
-	
-	private void postLogin(Map<String, String> creds) {
-		System.out.println(creds.get("dbname"));
-		System.out.println(creds.get("username"));
-		System.out.println(creds.get("password"));
-		
-//        SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
-//        context = builder.run(getParameters().getRaw().toArray(new String[0]));
 
-		mainController.postLogin();
+		Scene scene = new Scene(rootNode, 1000, 800);
+		scene.getStylesheets().add(this.getClass().getResource("/style/Application.css").toString());
+
+		primaryStage.setScene(scene);
+		primaryStage.centerOnScreen();
+		primaryStage.show();
+
+		Stage loginDialog = new LoginDialog(primaryStage, null, (c) -> postLogin(c));
+		loginDialog.initModality(Modality.APPLICATION_MODAL);
+		loginDialog.sizeToScene();
+		loginDialog.setOnHidden(e -> mainController.loginHidden());
+		loginDialog.showAndWait();
+
 	}
+
+	private void postLogin(Map<String, String> creds) {
+//		System.out.println(creds.get("dbname"));
+//		System.out.println(creds.get("username"));
+//		System.out.println(creds.get("password"));
+
+		Path dbpathname = DbHelper.getDbPath(creds.get("dbname"));
+		String url = String.format("jdbc:h2:tcp://localhost/%s", dbpathname.toString());
+		System.setProperty("user.db.url", url);
+		System.setProperty("user.db.username", creds.get("username"));
+		System.setProperty("user.db.password", creds.get("password"));
+
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
+		context = builder.run(getParameters().getRaw().toArray(new String[0]));		
 		
+		ApplicationContext appctx = (ApplicationContext)context;
+		System.setProperty("user.db.password", "<<hidden>>");
+		
+		mainController.postLogin(appctx);
+	}
+
 }
