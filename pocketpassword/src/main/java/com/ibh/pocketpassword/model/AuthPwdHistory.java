@@ -18,48 +18,53 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-public final class AuthPwdHistory  implements Serializable {
+public final class AuthPwdHistory implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE)
-  private final Long id;
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	private final Long id;
 
-  @ManyToOne()
-  @JoinColumn(name = "authentication_id", nullable = false)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private final Authentication authentication;
-  
-  private final String password;
+	@ManyToOne()
+	@JoinColumn(name = "authentication_id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private final Authentication authentication;
 
-  private final LocalDateTime expired;
+	private final String password;
 
-  private AuthPwdHistory() {
-	  this(null, null, null);
-  }
-  
-  private AuthPwdHistory(Long id, Authentication authentication, String password) {
-    this.id = id;
-	  this.authentication = authentication;
-    this.password = password;
-    this.expired = LocalDateTime.now();
-  }
+	private final LocalDateTime expired;
 
-  public Long getId() {
-    return id;
-  }
+	protected AuthPwdHistory() {
+		this(null, null);
+	}
 
-  public Authentication getAuthentication() {
-    return authentication;
-  }
+	private AuthPwdHistory(Authentication authentication, String password) {
+		this.id = null;
+		this.authentication = authentication;
+		this.password = password;
+		this.expired = LocalDateTime.now();
+	}
 
-  public String getPassword() {
-    return password;
-  }
+	public Long getId() {
+		return id;
+	}
 
-  public LocalDateTime getExpired() {
-    return expired;
-  }
-  
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public LocalDateTime getExpired() {
+		return expired;
+	}
+
+	public static class Builder {
+		public AuthPwdHistory create(Authentication authentication, String password) {
+			return new AuthPwdHistory(authentication, password);
+		}
+	}
 }

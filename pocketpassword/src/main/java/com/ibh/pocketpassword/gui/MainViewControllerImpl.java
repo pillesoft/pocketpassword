@@ -1,7 +1,9 @@
 package com.ibh.pocketpassword.gui;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
+import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.service.SettingService;
 import com.ibh.pocketpassword.viewmodel.SettingVM;
 
@@ -74,14 +77,16 @@ public class MainViewControllerImpl implements Initializable, ApplicationListene
     }
   }
 
-  public void postLogin(ApplicationContext appctx) {
+  public void postLogin(ApplicationContext appctx) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 //    System.out.println("postLogin");
     
     this.appContext = appctx;
     isAuthenticated.setValue(true);
 
 	SettingService ss = this.appContext.getBean(SettingService.class);
-	ss.getDbCreateTimestamp();
+	ss.initDB();
+	CryptHelper.init(ss.getDbCreateTimestamp());
+//	ss.getDbCreateTimestamp();
 
     setContentCenter(ViewEnum.AuthListView);
   }

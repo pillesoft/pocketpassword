@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.service.AuthLimitedService;
 import com.ibh.pocketpassword.service.AuthUserPwdService;
+import com.ibh.pocketpassword.service.SettingService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 import com.ibh.pocketpassword.viewmodel.AuthUserPwdVM;
 
@@ -41,6 +43,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private AuthLimitedService service;
 	@Autowired
 	private AuthUserPwdService userPwdService;
+	@Autowired
+	private SettingService settingService;
 	
 	private Clipboard clpbrd; 
 	
@@ -130,8 +134,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		tPaneShowAuth.expandedProperty().addListener((obs, wasExpanded, isExpanded)->{
 			if(isExpanded) {
 				AuthUserPwdVM upvm = userPwdService.getVMById(viewModel.getId().longValue());
-				txtShowUserName.setText(upvm.getUserName());
-				txtShowPassword.setText(upvm.getPassword());
+				txtShowUserName.setText(CryptHelper.decrypt(upvm.getUserName()));
+				txtShowPassword.setText(CryptHelper.decrypt(upvm.getPassword()));
 				
 				// add the timer
 				timerCountDown = TIMERVALUE;

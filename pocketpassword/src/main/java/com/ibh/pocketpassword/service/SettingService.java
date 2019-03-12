@@ -9,4 +9,5 @@ public interface SettingService extends BaseService<Setting, SettingVM> {
 
 	Optional<Setting> findByName(String name);
 	String getDbCreateTimestamp();
+	void initDB();
 }

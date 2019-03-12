@@ -6,9 +6,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.ibh.pocketpassword.model.Category;
 import com.ibh.pocketpassword.validation.ValidationException;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
@@ -23,9 +25,16 @@ public abstract class BaseController implements CrudController {
 	private static final Logger LOG = LoggerFactory.getLogger(BaseController.class);
 	private final Map<String, Control> boundedControls = new HashMap<>();
 
-	protected void bindBidirectional(StringProperty stringProperty, StringProperty stringProperty2) {
-		Bindings.bindBidirectional(stringProperty, stringProperty2);
-		boundedControls.put(stringProperty.getName(), (Control) stringProperty2.getBean());
+	protected void bindBidirectional(StringProperty vmStringProperty, StringProperty controlStringProperty) {
+		controlStringProperty.bindBidirectional(vmStringProperty);
+//		Bindings.bindBidirectional(vmStringProperty, controlStringProperty);
+		boundedControls.put(vmStringProperty.getName(), (Control) controlStringProperty.getBean());
+	}
+
+	protected <T> void bindBidirectional(ObjectProperty<T> vmTypeProperty, ObjectProperty<T> controlValueProperty) {
+		controlValueProperty.bindBidirectional(vmTypeProperty);
+//		Bindings.bindBidirectional(vmTypeProperty, controlValueProperty);
+		boundedControls.put(vmTypeProperty.getName(), (Control) controlValueProperty.getBean());
 	}
 	
 	protected void setControlStateNormal() {

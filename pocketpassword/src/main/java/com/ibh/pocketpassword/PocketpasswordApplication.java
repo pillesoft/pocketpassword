@@ -1,53 +1,38 @@
 package com.ibh.pocketpassword;
 
-import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.Environment;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
-import com.ibh.pocketpassword.gui.LoginControllerImpl;
 import com.ibh.pocketpassword.gui.LoginDialog;
 import com.ibh.pocketpassword.gui.MainViewControllerImpl;
 import com.ibh.pocketpassword.helper.DbHelper;
-import com.ibh.pocketpassword.viewmodel.LoginVM;
-
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 @SpringBootApplication
 public class PocketpasswordApplication extends Application {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PocketpasswordApplication.class);
+
 	private ConfigurableApplicationContext context;
 	private Parent rootNode;
 
-	AnnotationConfigApplicationContext annotCtx;
-	LoginControllerImpl loginController;
+//	AnnotationConfigApplicationContext annotCtx;
+//	LoginControllerImpl loginController;
 	MainViewControllerImpl mainController;
 
 	// https://wimdeblauwe.wordpress.com/2017/09/18/using-spring-boot-with-javafx/
@@ -91,7 +76,13 @@ public class PocketpasswordApplication extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 
-		Stage loginDialog = new LoginDialog(primaryStage, null, (c) -> postLogin(c));
+		Stage loginDialog = new LoginDialog(primaryStage, null, (c) -> {
+			try {
+				postLogin(c);
+			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e1) {
+				LOG.warn("exception", e1);
+			}
+		});
 		loginDialog.initModality(Modality.APPLICATION_MODAL);
 		loginDialog.sizeToScene();
 		loginDialog.setOnHidden(e -> mainController.loginHidden());
@@ -99,7 +90,7 @@ public class PocketpasswordApplication extends Application {
 
 	}
 
-	private void postLogin(Map<String, String> creds) {
+	private void postLogin(Map<String, String> creds) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 //		System.out.println(creds.get("dbname"));
 //		System.out.println(creds.get("username"));
 //		System.out.println(creds.get("password"));
@@ -119,4 +110,7 @@ public class PocketpasswordApplication extends Application {
 		mainController.postLogin(appctx);
 	}
 
+	  public static void main(String[] args) {
+		    launch(args);
+		  }
 }

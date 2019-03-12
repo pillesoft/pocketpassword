@@ -1,10 +1,12 @@
 package com.ibh.pocketpassword.service;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -71,14 +73,18 @@ public class SettingServiceImpl implements SettingService {
 
 	@Override
 	public String getDbCreateTimestamp() {
+		// this must be available already, the initDB has to be called first
+		Optional<Setting> optSett = findByName("DBCREATETIMESTAMP");
+		return optSett.get().getValue();
+	}
+
+	@Override
+	public void initDB() {
 		Optional<Setting> optSett = findByName("DBCREATETIMESTAMP");
 		
-		if (optSett.isPresent()) {
-			return optSett.get().getValue();
-		} else {
-			return save(new SettingVM("DBCREATETIMESTAMP", LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))).getValue();
+		if (!optSett.isPresent()) {
+			save(new SettingVM("DBCREATETIMESTAMP", ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)));
 		}
-		
 	}
 
 }

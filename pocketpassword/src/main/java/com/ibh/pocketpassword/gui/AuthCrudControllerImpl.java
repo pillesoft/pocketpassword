@@ -12,8 +12,11 @@ import org.springframework.stereotype.Component;
 import com.ibh.pocketpassword.model.Category;
 import com.ibh.pocketpassword.service.AuthenticationService;
 import com.ibh.pocketpassword.service.CategoryService;
+import com.ibh.pocketpassword.validation.ValidationError;
+import com.ibh.pocketpassword.validation.ValidationException;
 import com.ibh.pocketpassword.viewmodel.AuthenticationVM;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -28,7 +31,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 @Component
-public class AuthCrudControllerImpl implements Initializable, AuthCrudController {
+public class AuthCrudControllerImpl extends BaseController implements Initializable, AuthCrudController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AuthCrudControllerImpl.class);
 	
@@ -66,21 +69,21 @@ public class AuthCrudControllerImpl implements Initializable, AuthCrudController
 	
 	@Override
 	public void refresh(CRUDEnum mode, Long id) {
-
+		
 		this.mode = mode;
 		if (this.mode == CRUDEnum.New) {
 			viewModel = new AuthenticationVM();
 		} else {
 			viewModel = service.getVMById(id);
 		}
-		
-		txtTitle.textProperty().bindBidirectional(viewModel.getTitle());
-		cmbCategory.valueProperty().bindBidirectional(viewModel.getCategory());
-		txtUserName.textProperty().bindBidirectional(viewModel.getUserName());
-		txtPassword.textProperty().bindBidirectional(viewModel.getPassword());
-		txtWebAddress.textProperty().bindBidirectional(viewModel.getWebUrl());
-		dpValidFrom.valueProperty().bindBidirectional(viewModel.getValidFrom());
-		txaDescription.textProperty().bindBidirectional(viewModel.getDescription());
+
+		bindBidirectional(viewModel.getTitle(), txtTitle.textProperty());
+		bindBidirectional(viewModel.getCategory(), cmbCategory.valueProperty());
+		bindBidirectional(viewModel.getUserName(), txtUserName.textProperty());
+		bindBidirectional(viewModel.getPassword(), txtPassword.textProperty());
+		bindBidirectional(viewModel.getWebUrl(), txtWebAddress.textProperty());
+		bindBidirectional(viewModel.getValidFrom(), dpValidFrom.valueProperty());
+		bindBidirectional(viewModel.getDescription(), txaDescription.textProperty());
 
 		if(this.mode == CRUDEnum.Delete) {
 			cmdSave.setText("Delete");
@@ -96,8 +99,12 @@ public class AuthCrudControllerImpl implements Initializable, AuthCrudController
 
 	}
 
+
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		setControlStateNormal();
+		
 		categList = categService.getData();
 		cmbCategory.setItems(FXCollections.observableList(categList));
 		cmbCategory.setCellFactory(new Callback<ListView<Category>,ListCell<Category>>(){
@@ -135,12 +142,19 @@ public class AuthCrudControllerImpl implements Initializable, AuthCrudController
 	
 	@FXML
 	public void handleSave() {
-		if(this.mode == CRUDEnum.Delete) {
-			service.delete(viewModel);
-		} else {		
-			service.save(viewModel);
+		setControlStateNormal();
+		try {
+			viewModel.validateModel();
+			
+			if(this.mode == CRUDEnum.Delete) {
+				service.delete(viewModel);
+			} else {		
+				service.save(viewModel);
+			}
+			listViewController.postCrud();
+		} catch(ValidationException e) {
+			setControlStateError(e);
 		}
-		listViewController.postCrud();
 	}
 
 	@FXML

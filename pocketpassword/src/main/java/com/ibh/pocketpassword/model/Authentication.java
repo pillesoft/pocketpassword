@@ -33,12 +33,10 @@ public final class Authentication extends BaseValidatableModel<Authentication> {
 
 	@Column(nullable = false, unique = true)
     @NotNull
-    @Size(min = 5, max = 100)
 	private final String title;
 
 	@Column(nullable = false)
     @NotNull
-    @Size(min = 4, max = 100)
 	private final String userName;
 
 	private final String password;
@@ -51,7 +49,7 @@ public final class Authentication extends BaseValidatableModel<Authentication> {
 
 	@ManyToOne()
 	@JoinColumn(name = "category_id", nullable = false)
-//  @NotNull
+    @NotNull
 	private final Category category;
 
 	@OneToMany(targetEntity = AuthProperty.class, cascade = CascadeType.ALL, mappedBy = "authentication")

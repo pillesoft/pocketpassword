@@ -2,6 +2,9 @@ package com.ibh.pocketpassword.viewmodel;
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.ibh.pocketpassword.model.Category;
 import com.ibh.pocketpassword.validation.ValidationException;
 
@@ -15,8 +18,11 @@ import javafx.beans.property.StringProperty;
 public class AuthenticationVM extends BaseViewModel<AuthenticationVM> {
 
 	private LongProperty id;
+    @Size(min = 5, message = "Minimum length is 5 characters")
 	private StringProperty title;
-	private ObjectProperty<Category> category;
+	@NotNull(message = "Category is obligatory")
+    private ObjectProperty<Category> category;
+    @Size(min = 4, message = "Minimum length is 4 characters")
 	private StringProperty userName;
 	private StringProperty password;
 	private StringProperty webUrl;
@@ -24,14 +30,14 @@ public class AuthenticationVM extends BaseViewModel<AuthenticationVM> {
 	private ObjectProperty<LocalDate> validFrom;
 
 	public AuthenticationVM() {
-		this.id = new SimpleLongProperty(null, "id", 0);
-		this.title = new SimpleStringProperty(null, "title", "");
-		this.category = new SimpleObjectProperty<Category>(null, "category");
-		this.webUrl = new SimpleStringProperty(null, "webUrl", "");
-		this.description = new SimpleStringProperty(null, "description", "");
-		this.validFrom = new SimpleObjectProperty<LocalDate>(null, "validFrom", LocalDate.now());
-		this.userName = new SimpleStringProperty(null, "userName", "");
-		this.password = new SimpleStringProperty(null, "password", "");
+		this.id = new SimpleLongProperty(this, "id", 0);
+		this.title = new SimpleStringProperty(this, "title", "");
+		this.category = new SimpleObjectProperty<Category>(this, "category");
+		this.webUrl = new SimpleStringProperty(this, "webUrl", "");
+		this.description = new SimpleStringProperty(this, "description", "");
+		this.validFrom = new SimpleObjectProperty<LocalDate>(this, "validFrom", LocalDate.now());
+		this.userName = new SimpleStringProperty(this, "userName", "");
+		this.password = new SimpleStringProperty(this, "password", "");
 	}
 
 	public AuthenticationVM(long id, String title, Category category, String userName, String password, String webUrl, String description, LocalDate validFrom) {
