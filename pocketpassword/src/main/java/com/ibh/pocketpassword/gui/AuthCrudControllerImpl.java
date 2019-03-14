@@ -1,6 +1,7 @@
 package com.ibh.pocketpassword.gui;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -10,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.ibh.pocketpassword.model.Category;
+import com.ibh.pocketpassword.service.AuthPwdHistoryService;
 import com.ibh.pocketpassword.service.AuthenticationService;
 import com.ibh.pocketpassword.service.CategoryService;
 import com.ibh.pocketpassword.validation.ValidationError;
 import com.ibh.pocketpassword.validation.ValidationException;
+import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
+import com.ibh.pocketpassword.viewmodel.AuthPwdHistoryVM;
 import com.ibh.pocketpassword.viewmodel.AuthenticationVM;
 
 import javafx.beans.property.ObjectProperty;
@@ -25,6 +29,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.Callback;
@@ -39,6 +45,8 @@ public class AuthCrudControllerImpl extends BaseController implements Initializa
 	private AuthenticationService service;
 	@Autowired
 	private CategoryService categService;
+	@Autowired
+	private AuthPwdHistoryService authPwdHistoryService;
 	@Autowired(required=false)
 	private AuthListViewControllerImpl listViewController;
 		
@@ -66,6 +74,13 @@ public class AuthCrudControllerImpl extends BaseController implements Initializa
 	private Button cmdSave;
 	@FXML
 	private Button cmdCancel;
+
+	@FXML
+	private TableView<AuthPwdHistoryVM> histTable;
+	@FXML
+	private TableColumn<AuthPwdHistoryVM, LocalDateTime> expiredColumn;
+	@FXML
+	private TableColumn<AuthPwdHistoryVM, String> passwordColumn;
 	
 	@Override
 	public void refresh(CRUDEnum mode, Long id) {
@@ -96,7 +111,8 @@ public class AuthCrudControllerImpl extends BaseController implements Initializa
 			dpValidFrom.setEditable(false);
 			txaDescription.setEditable(false);
 		}
-
+		
+		histTable.setItems(FXCollections.observableList(authPwdHistoryService.getVMDataByAuth(service.getById(id))));
 	}
 
 
@@ -138,6 +154,10 @@ public class AuthCrudControllerImpl extends BaseController implements Initializa
               return categList.stream().filter(p->p.getName().equals(name)).findFirst().get();
           }
       });
+		
+		expiredColumn.setCellValueFactory(cellData -> cellData.getValue().getExpired());
+		passwordColumn.setCellValueFactory(cellData -> cellData.getValue().getPassword());
+
 	}
 	
 	@FXML

@@ -1,7 +1,5 @@
 package com.ibh.pocketpassword.service;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +12,7 @@ import com.ibh.pocketpassword.model.AuthPwdHistory;
 import com.ibh.pocketpassword.model.AuthPwdHistoryRepository;
 import com.ibh.pocketpassword.model.Authentication;
 import com.ibh.pocketpassword.model.AuthenticationRepository;
+import com.ibh.pocketpassword.viewmodel.AuthPwdHistoryVM;
 import com.ibh.pocketpassword.viewmodel.AuthenticationVM;
 
 @Service
@@ -22,10 +21,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private AuthenticationRepository authRepository;
+	
 	@Autowired
-	private AuthPwdHistoryRepository authPwdHistoryRepository;
-	@Autowired
-	private SettingService settingService;
+	private AuthPwdHistoryService authPwdHistoryService;
 	
 	@Override
 	public List<Authentication> getData() {
@@ -43,7 +41,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public AuthenticationVM getVMById(Long id) {
-		return fromEntity(authRepository.findById(id).get());
+		return fromEntity(getById(id));
 	}
 
 	@Override
@@ -77,7 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if (id != 0) {
 			AuthenticationVM orig = getVMById(id);
 			if (!orig.getPassword().get().equals(vm.getPassword().get())) {
-				authPwdHistoryRepository.save(new AuthPwdHistory.Builder().create(inst, CryptHelper.encrypt(orig.getPassword().get())));
+				authPwdHistoryService.save(new AuthPwdHistoryVM(inst, orig.getPassword().get()));
 			}
 		}
 		return authRepository.save(inst);
@@ -89,6 +87,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		
 		authRepository.delete(inst);
 		
+	}
+
+	@Override
+	public Authentication getById(Long id) {
+		return authRepository.findById(id).get();
 	}
 
 	

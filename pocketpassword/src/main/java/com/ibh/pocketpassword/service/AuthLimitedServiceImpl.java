@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ibh.pocketpassword.model.Authentication;
 import com.ibh.pocketpassword.model.AuthenticationRepository;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 
@@ -22,6 +23,12 @@ public class AuthLimitedServiceImpl implements AuthLimitedService {
 	@Override
 	public AuthLimitedVM getVMById(Long id) {
 		return authRepository.getAuthLimited(id);
+	}
+
+	@Override
+	public Authentication getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

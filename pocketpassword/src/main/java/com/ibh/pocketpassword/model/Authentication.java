@@ -13,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +31,11 @@ public final class Authentication extends BaseValidatableModel<Authentication> {
 	private final Long id;
 
 	@Column(nullable = false, unique = true)
-    @NotNull
+  @NotNull
 	private final String title;
 
 	@Column(nullable = false)
-    @NotNull
+  @NotNull
 	private final String userName;
 
 	private final String password;
@@ -49,7 +48,7 @@ public final class Authentication extends BaseValidatableModel<Authentication> {
 
 	@ManyToOne()
 	@JoinColumn(name = "category_id", nullable = false)
-    @NotNull
+  @NotNull
 	private final Category category;
 
 	@OneToMany(targetEntity = AuthProperty.class, cascade = CascadeType.ALL, mappedBy = "authentication")

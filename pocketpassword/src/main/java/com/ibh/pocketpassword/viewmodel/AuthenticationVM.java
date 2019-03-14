@@ -18,11 +18,11 @@ import javafx.beans.property.StringProperty;
 public class AuthenticationVM extends BaseViewModel<AuthenticationVM> {
 
 	private LongProperty id;
-    @Size(min = 5, message = "Minimum length is 5 characters")
+  @Size(min = 5, message = "Minimum length is 5 characters")
 	private StringProperty title;
 	@NotNull(message = "Category is obligatory")
-    private ObjectProperty<Category> category;
-    @Size(min = 4, message = "Minimum length is 4 characters")
+  private ObjectProperty<Category> category;
+  @Size(min = 4, message = "Minimum length is 4 characters")
 	private StringProperty userName;
 	private StringProperty password;
 	private StringProperty webUrl;

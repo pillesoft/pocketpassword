@@ -1,12 +1,10 @@
 package com.ibh.pocketpassword.service;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,6 +83,12 @@ public class SettingServiceImpl implements SettingService {
 		if (!optSett.isPresent()) {
 			save(new SettingVM("DBCREATETIMESTAMP", ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME)));
 		}
+	}
+
+	@Override
+	public Setting getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

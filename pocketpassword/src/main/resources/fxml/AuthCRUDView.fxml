@@ -5,6 +5,8 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -81,23 +83,29 @@
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
             </GridPane>
-            <VBox alignment="TOP_CENTER">
+            <HBox alignment="CENTER_RIGHT" spacing="5.0">
                <children>
-                  <HBox alignment="CENTER_RIGHT" spacing="5.0">
-                     <children>
-                        <Button fx:id="cmdSave" defaultButton="false" mnemonicParsing="false" onAction="#handleSave" text="Save" />
-                        <Button fx:id="cmdCancel" cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
-                     </children>
-                     <VBox.margin>
-                        <Insets top="5.0" />
-                     </VBox.margin>
-                  </HBox>
+                  <Button fx:id="cmdSave" defaultButton="false" mnemonicParsing="false" onAction="#handleSave" text="Save" />
+                  <Button fx:id="cmdCancel" cancelButton="true" mnemonicParsing="false" onAction="#handleCancel" text="Cancel" />
                </children>
                <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </VBox.margin>
-            </VBox>
-         </children>
+            </HBox>
+            <Label layoutX="10.0" layoutY="10.0" styleClass="viewTitle" text="Password Histories" />
+            <TableView fx:id="histTable">
+              <columns>
+                <TableColumn fx:id="expiredColumn" prefWidth="120.0" text="Expired On" />
+                <TableColumn fx:id="passwordColumn" prefWidth="120.0" text="Password" />
+              </columns>
+              <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+              </columnResizePolicy>
+              <VBox.margin>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+              </VBox.margin>
+            </TableView>
+          </children>
       </VBox>
    </children>
 </AnchorPane>

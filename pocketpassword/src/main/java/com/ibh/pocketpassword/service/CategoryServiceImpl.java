@@ -65,5 +65,11 @@ public class CategoryServiceImpl implements CategoryService {
 		
 	}
 
+	@Override
+	public Category getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.service.AuthLimitedService;
 import com.ibh.pocketpassword.service.AuthUserPwdService;
-import com.ibh.pocketpassword.service.SettingService;
 import com.ibh.pocketpassword.viewmodel.AuthLimitedVM;
 import com.ibh.pocketpassword.viewmodel.AuthUserPwdVM;
 
@@ -43,9 +42,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 	private AuthLimitedService service;
 	@Autowired
 	private AuthUserPwdService userPwdService;
-	@Autowired
-	private SettingService settingService;
-	
+
 	private Clipboard clpbrd; 
 	
 	private AuthLimitedVM viewModel;
@@ -162,7 +159,6 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 				}
 			}
 		});
-//		setUpValidators();
 	}
 
 	private void closeShowAuthPane() {
@@ -182,12 +178,8 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		if(timeline != null) {
 			closeShowAuthPane();
 		}
-//		if (viewModel == null) {
-//			unbind();
-//		} else {
-			viewModel = service.getVMById(id); 
-			bind();	
-//		}
+		viewModel = service.getVMById(id); 
+		bind();	
 		
 	}
 
@@ -198,30 +190,5 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 		lblCreatedOn.setText(viewModel.getValidFrom().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
 	}
 
-//	private void unbind() {
-//		hlTitle.setText(null);
-//		lblCategName.setText(null);
-//		lblDaysOld.setText("N/A");
-//		lblCreatedOn.setText(null);
-//	}
-	
-//	@Override
-//	public void setUpValidators() {
-//		try {
-//			setUpValidator(txtTitle, vm.getTitle());
-//			setUpValidator(txtCategory, vm.getCategory());
-//			setUpValidator(txtWebAddress, vm.getWebUrl());
-//			setUpValidator(txtValidFrom, vm.getValidFrom());
-//			setUpValidator(txaDescription, vm.getDescription());
-//
-//			setControlStateNormal();
-//		} catch (Exception ex) {
-//			LOG.error(ex.getMessage(), ex);
-//		}
-//	}
-
-//	private AuthLimitedVM fromEntityToVM(Authentication c) {
-//		return new AuthLimitedVM(c.getId(), c.getTitle(), c.getCategory().getName(), c.getWeburl(), c.getDescription(), c.getValidfrom(), c.getCategory().getColor());
-//	}
 
 }

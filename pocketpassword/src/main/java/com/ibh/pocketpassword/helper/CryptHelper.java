@@ -19,9 +19,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.util.Base64;
 import java.security.MessageDigest;
-import java.util.Arrays;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.xml.bind.DatatypeConverter;
 
@@ -39,30 +36,6 @@ public final class CryptHelper {
 	
 	private CryptHelper() {
 	}
-
-//	private static byte[] keyByte;
-//
-//	public static void init(String key) {
-//		final int maxlength = 24;
-//		byte[] tempbyte = key.getBytes(StandardCharsets.UTF_8);
-//		byte[] pwdbyte = new byte[maxlength];
-//		if (tempbyte.length < maxlength) {
-//			int pwdidx = 0;
-//			int tempidx = 0;
-//			while (pwdidx < maxlength) {
-//				if (tempidx < tempbyte.length) {
-//					pwdbyte[pwdidx++] = tempbyte[tempidx++];
-//				} else {
-//					tempidx = 0;
-//				}
-//			}
-//		} else if (tempbyte.length > maxlength) {
-//			pwdbyte = Arrays.copyOf(tempbyte, maxlength);
-//		} else {
-//			pwdbyte = tempbyte;
-//		}
-//		keyByte = pwdbyte;
-//	}
 
 	public static void init(String password) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		key = hash(password);
@@ -136,100 +109,6 @@ public final class CryptHelper {
 		}
 		return null;
 	}
-	
-//	public static String encrypt1(final String clearText) {
-//		KeyGenerator generator;
-//		try {
-//			generator = KeyGenerator.getInstance("AES");
-//
-//			generator.init(192);
-//			Key key = generator.generateKey();
-//
-//			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-//			SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
-//			byte[] random = new byte[16];
-//			secureRandom.nextBytes(random);
-//			IvParameterSpec ivSpec = new IvParameterSpec(random);
-//
-//			byte[] input = clearText.getBytes();
-//
-//			cipher.init(Cipher.ENCRYPT_MODE, key, ivSpec);
-//			byte[] encrypted = cipher.doFinal(input);
-//
-//			return new String(encrypted);
-//		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException
-//				| InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-
-//	public static String encrypt(final String clearText) {
-////		System.out.println("encrypt");
-//		try {
-//			byte[] messageBytes = clearText.getBytes(StandardCharsets.UTF_8);
-//			KeyGenerator gen = KeyGenerator.getInstance("AES");
-//			gen.init(192);
-//			/* 128-bit AES */
-//			SecretKey secret = gen.generateKey();
-//			byte[] key = secret.getEncoded();
-////    printByteArray("key", key);
-//
-//			SecureRandom secRnd = SecureRandom.getInstance("SHA1PRNG");
-//			byte[] ivBytes = new byte[16];
-//			// Generate a new IV.
-//			secRnd.nextBytes(ivBytes);
-////    printByteArray("iv", ivBytes);
-//
-//			byte[] cypher = transform(Cipher.ENCRYPT_MODE, key, ivBytes, messageBytes);
-////    printByteArray("cypher", cypher);
-//
-////			byte[] xorkey = xorByteArray(keyByte, key);
-////    printByteArray("xorkey", xorkey);
-//
-////			String xorhex = toHexString(xorkey);
-//			String xorhex = toHexString(key);
-////    System.out.println("xorhex: " + xorhex);
-//			String ivhex = toHexString(ivBytes);
-////    System.out.println("ivhex: " + ivhex);
-//			String cyphex = toHexString(cypher);
-////    System.out.println("cyphex: " + cyphex);
-//
-//			return xorhex + ivhex + cyphex;
-//		} catch (InvalidKeyException | InvalidAlgorithmParameterException | NoSuchAlgorithmException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException ex) {
-//			LOG.warn("encrypt exception", ex);
-//		}
-//		return null;
-//	}
-//
-//	public static String decrypt(final String cypher) {
-////		System.out.println("decrypt");
-//
-//		String xorhex = cypher.substring(0, 48);
-////    System.out.println("xorhex: " + xorhex);
-//		String ivhex = cypher.substring(48, 80);
-////    System.out.println("ivhex: " + ivhex);
-//		String cyphex = cypher.substring(80);
-////    System.out.println("cyphex: " + cyphex);
-//
-//		byte[] xorbyte = toByteArray(xorhex);
-////		byte[] key = xorByteArray(xorbyte, keyByte);
-////    printByteArray("xor", xorbyte);
-////    printByteArray("key", key);
-//
-//		byte[] ivBytes = toByteArray(ivhex);
-////    printByteArray("iv", ivBytes);
-//		byte[] cyphbyte = toByteArray(cyphex);
-////    printByteArray("cypher", cyphbyte);
-//
-//		try {
-////			return new String(transform(Cipher.DECRYPT_MODE, key, ivBytes, cyphbyte));
-//			return new String(transform(Cipher.DECRYPT_MODE, xorbyte, ivBytes, cyphbyte));
-//		} catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException | NoSuchAlgorithmException | NoSuchPaddingException ex) {
-//			LOG.warn("decrypt exception", ex);
-//		}
-//		return null;
-//	}
 
 	private static String toHexString(byte[] array) {
 		return DatatypeConverter.printHexBinary(array);
@@ -255,21 +134,5 @@ public final class CryptHelper {
 //    }
 //    System.out.println();
 //  }
-
-//	private static byte[] transform(final int mode, final byte[] keyBytes, final byte[] ivBytes,
-//			final byte[] messageBytes) throws InvalidKeyException, InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
-//		final SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
-//		final IvParameterSpec ivSpec = new IvParameterSpec(ivBytes);
-//		byte[] transformedBytes = null;
-//
-//			// final Cipher cipher = Cipher.getInstance("AES/CTR/NoPadding");
-//			final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-//
-//			cipher.init(mode, keySpec, ivSpec);
-//
-//			transformedBytes = cipher.doFinal(messageBytes);
-//
-//		return transformedBytes;
-//	}
 
 }

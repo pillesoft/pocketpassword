@@ -4,15 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -20,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.service.SettingService;
-import com.ibh.pocketpassword.viewmodel.SettingVM;
 
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -53,11 +47,9 @@ public class MainViewControllerImpl implements Initializable, ApplicationListene
 
 	  this.bundle = bundle;
 	  
-      isAuthenticated = new SimpleBooleanProperty(false);
-      toolbar.disableProperty().bind(isAuthenticated.not());
+    isAuthenticated = new SimpleBooleanProperty(false);
+    toolbar.disableProperty().bind(isAuthenticated.not());
     
-//      setContentCenter(ViewEnum.Login);
-
   }
 
   private void setContentCenter(ViewEnum view) {
@@ -78,15 +70,13 @@ public class MainViewControllerImpl implements Initializable, ApplicationListene
   }
 
   public void postLogin(ApplicationContext appctx) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//    System.out.println("postLogin");
     
     this.appContext = appctx;
     isAuthenticated.setValue(true);
 
-	SettingService ss = this.appContext.getBean(SettingService.class);
-	ss.initDB();
-	CryptHelper.init(ss.getDbCreateTimestamp());
-//	ss.getDbCreateTimestamp();
+		SettingService ss = this.appContext.getBean(SettingService.class);
+		ss.initDB();
+		CryptHelper.init(ss.getDbCreateTimestamp());
 
     setContentCenter(ViewEnum.AuthListView);
   }
@@ -119,10 +109,6 @@ public class MainViewControllerImpl implements Initializable, ApplicationListene
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-
-//		SettingService ss = event.getApplicationContext().getBean(SettingService.class);
-//		ss.getDbCreateTimestamp();
-		
 		
 	}
 

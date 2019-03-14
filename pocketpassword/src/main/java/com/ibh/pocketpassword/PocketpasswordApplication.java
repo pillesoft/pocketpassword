@@ -31,8 +31,6 @@ public class PocketpasswordApplication extends Application {
 	private ConfigurableApplicationContext context;
 	private Parent rootNode;
 
-//	AnnotationConfigApplicationContext annotCtx;
-//	LoginControllerImpl loginController;
 	MainViewControllerImpl mainController;
 
 	// https://wimdeblauwe.wordpress.com/2017/09/18/using-spring-boot-with-javafx/
@@ -42,21 +40,8 @@ public class PocketpasswordApplication extends Application {
 		ResourceBundle bundle = ResourceBundle.getBundle("bundles.UIBundle", new Locale("hu"));
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"), bundle);
-		// loader.setControllerFactory(context::getBean);
 		rootNode = loader.load();
 		mainController = loader.<MainViewControllerImpl>getController();
-//        mainController.setPostLoginHandler((c)->postLogin(c));
-
-//        System.setProperty("user.db.url", "jdbc:h2:tcp://localhost/c:/temp/db/test3");
-//        System.setProperty("user.db.username", "ivan");
-//        System.setProperty("user.db.password", "a");
-//        
-//        if (canConnect()) {
-//	        SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
-//	        context = builder.run(getParameters().getRaw().toArray(new String[0]));
-//        }
-//        
-//
 	}
 
 	@Override
@@ -105,7 +90,7 @@ public class PocketpasswordApplication extends Application {
 		context = builder.run(getParameters().getRaw().toArray(new String[0]));		
 		
 		ApplicationContext appctx = (ApplicationContext)context;
-		System.setProperty("user.db.password", "<<hidden>>");
+		System.clearProperty("user.db.password");
 		
 		mainController.postLogin(appctx);
 	}
