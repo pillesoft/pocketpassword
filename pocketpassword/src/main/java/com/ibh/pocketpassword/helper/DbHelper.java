@@ -8,11 +8,15 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ibh.pocketpassword.model.IBHDatabaseException;
 
@@ -71,6 +75,17 @@ public final class DbHelper {
 		return dbpath;
 	}
 
+	@Autowired
+	public static void changePwd(DataSource ds, String password) throws SQLException {
+		try (Connection c = ds.getConnection()) {
+			Statement s = c.createStatement();
+			String sql  = String.format("ALTER USER %s SET PASSWORD '%'", System.getProperty("user.db.username").toUpperCase(), password);
+			s.executeUpdate(sql);
+			c.commit();
+			s.close();
+		}
+	}
+	
 	private static Path getDbFileName(String dbName) {
 		return getDbPath(dbName.concat(".mv.db"));
 	}

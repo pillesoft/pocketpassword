@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.ibh.pocketpassword.gui;
 
 public enum ViewEnum {
@@ -10,8 +5,9 @@ public enum ViewEnum {
 	AuthListView("AuthListView"),
 	CategoryListView("CategoryListView"),
 	AuthDetailsView("AuthDetailsView"),
-	AuthCrudView("AuthCRUDView");
-
+	AuthCrudView("AuthCRUDView"),
+	ChangePwdView("ChangePwdView");
+	
 	private final String viewFile;
 
 	public String getViewFile() {
