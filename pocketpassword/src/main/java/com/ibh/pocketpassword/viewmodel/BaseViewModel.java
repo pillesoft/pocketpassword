@@ -54,6 +54,19 @@ public abstract class BaseViewModel<T> implements ViewModelValidation {
 		}
 	}
 
+	protected void validateProperty(String property) throws ValidationException {
+		validationErrors = new HashSet<>();
+
+		ValidatorFactory valfact = Validation.buildDefaultValidatorFactory();
+		Validator validator = valfact.getValidator();
+		Set<ConstraintViolation<BaseViewModel<T>>> errors = validator.validateProperty(this, property);
+
+		convertErrors(errors);
+		if (!validationErrors.isEmpty()) {
+			throw new ValidationException(validationErrors);
+		}
+	}
+	
 	private void convertErrors(Set<ConstraintViolation<BaseViewModel<T>>> errors) {
 		errors.stream().forEach((err) -> {
 			String propname = ((PathImpl) err.getPropertyPath()).getLeafNode().getName();

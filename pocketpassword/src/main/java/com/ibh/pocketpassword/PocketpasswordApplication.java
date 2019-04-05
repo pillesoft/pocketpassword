@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import com.ibh.pocketpassword.gui.LoginDialog;
 import com.ibh.pocketpassword.gui.MainViewControllerImpl;
+import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.helper.DbHelper;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -30,14 +31,14 @@ public class PocketpasswordApplication extends Application {
 
 	private ConfigurableApplicationContext context;
 	private Parent rootNode;
-
+  private ResourceBundle bundle;
 	MainViewControllerImpl mainController;
 
 	// https://wimdeblauwe.wordpress.com/2017/09/18/using-spring-boot-with-javafx/
 	@Override
 	public void init() throws Exception {
 
-		ResourceBundle bundle = ResourceBundle.getBundle("bundles.UIBundle", new Locale("hu"));
+		bundle = ResourceBundle.getBundle("bundles.UIBundle", new Locale("hu"));
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main.fxml"), bundle);
 		rootNode = loader.load();
@@ -61,7 +62,7 @@ public class PocketpasswordApplication extends Application {
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 
-		Stage loginDialog = new LoginDialog(primaryStage, null, (c) -> {
+		Stage loginDialog = new LoginDialog(primaryStage, bundle, (c) -> {
 			try {
 				postLogin(c);
 			} catch (NoSuchAlgorithmException | UnsupportedEncodingException e1) {
@@ -76,16 +77,15 @@ public class PocketpasswordApplication extends Application {
 	}
 
 	private void postLogin(Map<String, String> creds) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//		System.out.println(creds.get("dbname"));
-//		System.out.println(creds.get("username"));
-//		System.out.println(creds.get("password"));
-
-		Path dbpathname = DbHelper.getDbPath(creds.get("dbname"));
-		String url = String.format("jdbc:h2:tcp://localhost/%s", dbpathname.toString());
-		System.setProperty("user.db.url", url);
+		String filepwd = CryptHelper.hash(creds.get("password"));
+		System.setProperty("user.db.url", DbHelper.getConnectionUrl(creds.get("dbname"), creds.get("newdb") == "true" ? false : true));
 		System.setProperty("user.db.username", creds.get("username"));
-		System.setProperty("user.db.password", creds.get("password"));
+		System.setProperty("user.db.password", String.format("%s %s", filepwd, creds.get("password")));
 
+		LOG.debug(System.getProperty("user.db.url"));
+		LOG.debug(System.getProperty("user.db.username"));
+		LOG.debug(System.getProperty("user.db.password"));
+		
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
 		context = builder.run(getParameters().getRaw().toArray(new String[0]));		
 		

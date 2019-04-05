@@ -43,7 +43,7 @@ public final class CryptHelper {
 	
 	public static String hash(String stringToHash) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
-		MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+		MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
 		messageDigest.update(stringToHash.getBytes(StandardCharsets.UTF_8));
 		String hashedString = Base64.getEncoder().encodeToString(messageDigest.digest());
 		return hashedString;

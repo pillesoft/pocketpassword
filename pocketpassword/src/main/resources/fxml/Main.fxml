@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 
@@ -13,11 +11,6 @@
           <Button mnemonicParsing="false" onAction="#handleTlbExit" text="%btnExit" />
             <Button mnemonicParsing="false" onAction="#handleTlbAuth" text="%btnAuths" />
             <Button mnemonicParsing="false" onAction="#handleTlbCateg" text="%btnCategories" />
-            <MenuButton mnemonicParsing="false" text="%mnuSettings">
-              <items>
-                <MenuItem mnemonicParsing="false" onAction="#handlemnuChangePwd" text="%mnuChangePwd" />
-              </items>
-            </MenuButton>
             <Button mnemonicParsing="false" onAction="#handleTlbAbout" text="%btnAbout" />
         </items>
       </ToolBar>

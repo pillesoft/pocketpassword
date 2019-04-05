@@ -3,6 +3,8 @@ package com.ibh.pocketpassword.helper;
 import static org.junit.Assert.*;
 
 import org.apache.commons.codec.binary.Hex;
+
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
@@ -73,6 +75,15 @@ public class CryptHelperTest {
 		String res2 = CryptHelper.encrypt("he1lo");
 		
 		assertNotSame("res1 is same as res2", res1, res2);
+		
+	}
+
+	@Test
+	public void testHash() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+				
+		String res1 = CryptHelper.hash("654321");
+		
+		assertEquals("hash is NOK", "aQQ3aS2QLP0jAFvaFmMdg2RImeeNwKSJ2m3KPLn5wM3NndUzvFkQLckBVSI993dnIyjJFJNU3iOfSMWPCh1Epg==", res1);
 		
 	}
 

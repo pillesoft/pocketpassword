@@ -96,10 +96,7 @@ public class MainViewControllerImpl implements Initializable, ApplicationListene
     setContentCenter(ViewEnum.CategoryListView);
   }
 
-  @FXML
-  public void handlemnuChangePwd() {
-    setContentCenter(ViewEnum.ChangePwdView);
-  }
+
 
   @FXML
   public void handleTlbAbout() {
