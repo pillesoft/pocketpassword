@@ -3,6 +3,7 @@ package com.ibh.pocketpassword;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -17,6 +18,8 @@ import com.ibh.pocketpassword.gui.LoginDialog;
 import com.ibh.pocketpassword.gui.MainViewControllerImpl;
 import com.ibh.pocketpassword.helper.CryptHelper;
 import com.ibh.pocketpassword.helper.DbHelper;
+import com.ibh.pocketpassword.helper.PropertyHelper;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,6 +29,8 @@ import javafx.stage.Stage;
 
 @SpringBootApplication
 public class PocketpasswordApplication extends Application {
+
+//  -Dconfig.file.location="C:\\test\\config.properties"
 
 	private static final Logger LOG = LoggerFactory.getLogger(PocketpasswordApplication.class);
 
@@ -82,9 +87,9 @@ public class PocketpasswordApplication extends Application {
 		System.setProperty("user.db.username", creds.get("username"));
 		System.setProperty("user.db.password", String.format("%s %s", filepwd, creds.get("password")));
 
-		LOG.debug(System.getProperty("user.db.url"));
-		LOG.debug(System.getProperty("user.db.username"));
-		LOG.debug(System.getProperty("user.db.password"));
+//		LOG.debug(System.getProperty("user.db.url"));
+//		LOG.debug(System.getProperty("user.db.username"));
+//		LOG.debug(System.getProperty("user.db.password"));
 		
 		SpringApplicationBuilder builder = new SpringApplicationBuilder(PocketpasswordApplication.class);
 		context = builder.run(getParameters().getRaw().toArray(new String[0]));		
@@ -95,7 +100,14 @@ public class PocketpasswordApplication extends Application {
 		mainController.postLogin(appctx);
 	}
 
-	  public static void main(String[] args) {
-		    launch(args);
-		  }
+  public static void main(String[] args) {
+  	if (Arrays.asList(args).stream().filter(f->f.startsWith("-Dconfig.file.location")).findFirst().isPresent()) {
+			PropertyHelper.setPropertyFile(Arrays.asList(args).stream()
+					.filter(f->f.startsWith("-Dconfig.file.location"))
+					.findFirst()
+					.get().split("=")[1]);
+		}
+    launch(args);
+  }
+	  
 }

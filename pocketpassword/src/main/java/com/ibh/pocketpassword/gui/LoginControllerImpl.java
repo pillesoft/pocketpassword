@@ -1,6 +1,7 @@
 package com.ibh.pocketpassword.gui;
 
 import com.ibh.pocketpassword.helper.DbHelper;
+import com.ibh.pocketpassword.helper.PropertyHelper;
 import com.ibh.pocketpassword.model.IBHDatabaseException;
 import com.ibh.pocketpassword.validation.ValidationException;
 import com.ibh.pocketpassword.viewmodel.LoginVM;
@@ -34,6 +35,8 @@ public class LoginControllerImpl extends BaseController implements Initializable
 
 	private Consumer<Map<String, String>> postLoginHandler;
 
+	@FXML
+	private TextField txtDbPath;
 	@FXML
 	private TextField txtDatabaseName;
 	@FXML
@@ -139,6 +142,7 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	@Override
 	public void initialize(URL url, ResourceBundle rb) {
 
+		txtDbPath.setText(PropertyHelper.getAppDbFolder());
 		viewModel = new LoginVM();
 
 		bindBidirectional(viewModel.getDatabaseName(), txtDatabaseName.textProperty());

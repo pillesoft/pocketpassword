@@ -27,17 +27,6 @@ public final class DbHelper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DbHelper.class);
 
-	private static final Properties PROPERTIES = new Properties();
-
-	static {
-		try {
-			try (InputStream is = DbHelper.class.getResourceAsStream("/application.properties")) {
-				PROPERTIES.load(is);
-			}
-		} catch (IOException ex) {
-			LOG.warn("cannot load properties file", ex);
-		}
-	}
 
 	private DbHelper() {
 	}
@@ -55,9 +44,9 @@ public final class DbHelper {
 			bds.setUsername(username);
 			bds.setPassword(String.format("%s %s", filepwd, password));
 
-			LOG.debug(bds.getUrl());
-			LOG.debug(bds.getUsername());
-			LOG.debug(bds.getPassword());
+//			LOG.debug(bds.getUrl());
+//			LOG.debug(bds.getUsername());
+//			LOG.debug(bds.getPassword());
 			
 			try (Connection conn = bds.getConnection()) {
 				DatabaseMetaData meta = conn.getMetaData();
@@ -76,8 +65,8 @@ public final class DbHelper {
 		}
 	}
 	
-	public static Path getDbPath(String dbName) {
-		Path dbpath = Paths.get(PROPERTIES.getProperty("app.dbfolder"), dbName);
+	public static Path getDbFullPath(String dbName) {
+		Path dbpath = Paths.get(PropertyHelper.getAppDbFolder(), dbName);
 
 		return dbpath;
 	}
@@ -90,8 +79,8 @@ public final class DbHelper {
 		String filepwdnew = CryptHelper.hash(newPassword);
 
 		LOG.debug("change encrypt pwd");
-		ChangeFileEncryption.execute(PROPERTIES.getProperty("app.dbfolder"), dbname, "AES", filepwdold.toCharArray(), filepwdnew.toCharArray(), false);
-		LOG.debug(filepwdnew);
+		ChangeFileEncryption.execute(PropertyHelper.getAppDbFolder(), dbname, "AES", filepwdold.toCharArray(), filepwdnew.toCharArray(), true);
+//		LOG.debug(filepwdnew);
 
 		LOG.debug("change db pwd");
 		try (BasicDataSource bds = new BasicDataSource()) {
@@ -113,14 +102,15 @@ public final class DbHelper {
 	}
 	
 	private static Path getDbFileName(String dbName) {
-		return getDbPath(dbName.concat(".mv.db"));
+		return getDbFullPath(dbName.concat(".mv.db"));
 	}
 
 	public static String getConnectionUrl(String dbname, boolean isAvailable) {
-		String url = String.format("jdbc:h2:file:%s;CIPHER=AES", getDbPath(dbname).toString());
+		String url = String.format("jdbc:h2:file:%s;CIPHER=AES", getDbFullPath(dbname).toString());
 		if(isAvailable) {
 			url += ";IFEXISTS=TRUE";
 		}
 		return url;
 	}
+	
 }

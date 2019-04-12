@@ -24,6 +24,7 @@
   <rowConstraints>
       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -34,12 +35,12 @@
       <Insets bottom="10.0" left="10.0" right="10.0" top="20.0" />
    </padding>
    <children>
-      <Label text="Database" GridPane.rowIndex="1" />
-      <Label text="User Name" GridPane.rowIndex="2" />
-      <Label text="Password" GridPane.rowIndex="3" />
-      <TextField fx:id="txtDatabaseName" promptText="Database Name" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <TextField fx:id="txtUserName" promptText="User Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-      <PasswordField fx:id="txtPassword" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <Label text="Database" GridPane.rowIndex="2" />
+      <Label text="User Name" GridPane.rowIndex="3" />
+      <Label text="Password" GridPane.rowIndex="4" />
+      <TextField fx:id="txtDatabaseName" promptText="Database Name" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <TextField fx:id="txtUserName" promptText="User Name" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+      <PasswordField fx:id="txtPassword" promptText="Password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
       <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
          <image>
             <Image url="@../image/keyring-icon.png" />
@@ -48,12 +49,12 @@
             <Insets right="20.0" />
          </GridPane.margin>
       </ImageView>
-      <Label fx:id="lblErrorText" textFill="RED" GridPane.columnSpan="2" GridPane.rowIndex="5">
+      <Label fx:id="lblErrorText" textFill="RED" GridPane.columnSpan="2" GridPane.rowIndex="6">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </Label>
-      <AnchorPane GridPane.columnSpan="2" GridPane.rowIndex="6">
+      <AnchorPane GridPane.columnSpan="2" GridPane.rowIndex="7">
          <GridPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
          </GridPane.margin>
@@ -76,7 +77,9 @@
             </HBox>
          </children>
       </AnchorPane>
-      <Label fx:id="lblPasswordNew" text="New Password" GridPane.rowIndex="4" />
-      <PasswordField fx:id="txtPasswordNew" promptText="New Password" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <Label fx:id="lblPasswordNew" text="New Password" GridPane.rowIndex="5" />
+      <PasswordField fx:id="txtPasswordNew" promptText="New Password" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+      <Label text="Database Path" GridPane.rowIndex="1" />
+      <TextField fx:id="txtDbPath" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
    </children>
 </GridPane>
