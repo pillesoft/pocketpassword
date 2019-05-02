@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -49,7 +50,9 @@ public class LoginControllerImpl extends BaseController implements Initializable
 	private Label lblErrorText;
 	@FXML
 	private Label lblPasswordNew;
-
+	@FXML
+	private CheckBox chkDbRemember;
+	
 	@FXML
 	private Button btnLogin;
 	@FXML
@@ -82,6 +85,10 @@ public class LoginControllerImpl extends BaseController implements Initializable
 			this.postLoginHandler.accept(creds);
 
 	    closeLogin();
+	    
+	    if (this.chkDbRemember.isSelected()) {
+	    	PropertyHelper.setDatabaseName(viewModel.getDatabaseName().get());
+	    }
 
 		} catch (IBHDatabaseException dexc) {
 			lblErrorText.setText(dexc.getType().getDescription());
@@ -153,6 +160,8 @@ public class LoginControllerImpl extends BaseController implements Initializable
 		lblPasswordNew.visibleProperty().bind(viewModel.getPasswordChange());
 		txtPasswordNew.visibleProperty().bind(viewModel.getPasswordChange());
 		btnCreateDB.visibleProperty().bind(viewModel.getPasswordChange().not());
+		
+		txtDatabaseName.setText(PropertyHelper.getAppDbName());
 		
 		viewModel.getPasswordChange().addListener((observable, oldvalue, newvalue) -> {
 			btnLogin.textProperty().set(newvalue ? "Change Password" : "Login");
