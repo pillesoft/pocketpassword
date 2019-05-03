@@ -92,7 +92,7 @@ public class AuthDetailsViewControllerImpl implements Initializable, AuthDetails
 
 	@FXML
 	public void handleTitleLink() {
-		String command = String.format("start %s %s", "firefox", viewModel.getWebUrl());
+		String command = String.format("start %s %s", "firefox", viewModel.getWebUrl().get());
 		try {
 			Runtime.getRuntime().exec(new String[] { "cmd", "/c", command });
 			// this is linux

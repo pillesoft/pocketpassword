@@ -24,6 +24,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -63,6 +64,7 @@ public class PocketpasswordApplication extends Application {
 		Scene scene = new Scene(rootNode, 1000, 800);
 		scene.getStylesheets().add(this.getClass().getResource("/style/Application.css").toString());
 
+		primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/image/safe.png")));
 		primaryStage.setScene(scene);
 		primaryStage.centerOnScreen();
 		primaryStage.show();
@@ -74,6 +76,7 @@ public class PocketpasswordApplication extends Application {
 				LOG.warn("exception", e1);
 			}
 		});
+		loginDialog.getIcons().add(new Image(this.getClass().getResourceAsStream("/image/safe.png")));
 		loginDialog.initModality(Modality.APPLICATION_MODAL);
 		loginDialog.sizeToScene();
 		loginDialog.setOnHidden(e -> mainController.loginHidden());
